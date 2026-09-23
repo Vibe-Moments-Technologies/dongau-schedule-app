@@ -10,19 +10,15 @@
         android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
 
-    <!-- Блокируем AD_ID пермишен, который транзитивно тянет AppMetrica SDK через
-         play-services-ads-identifier. Нам не нужен рекламный идентификатор. -->
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID"
-        tools:node="remove"/>
-
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher_new"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:name=".ScheduleApp"
-        android:roundIcon="@mipmap/ic_launcher_new_round"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Krasava">
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.Dongau">
         <!-- Одна иконка, без алиасов и автоадаптации: набор смены иконки
              по теме оказался хрупким (краш на старте, пропажа иконки),
              а выгода не стоила риска. -->

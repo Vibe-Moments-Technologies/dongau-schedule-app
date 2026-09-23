@@ -5,10 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.jetbrains.kmpapp.data.ScheduleRepository
 import com.jetbrains.kmpapp.data.TaskRepository
 import com.jetbrains.kmpapp.data.DebugConfig
-import com.jetbrains.kmpapp.data.analytics.AnalyticsEvents
-import com.jetbrains.kmpapp.data.analytics.AppAnalytics
 import com.jetbrains.kmpapp.data.model.ScheduleTarget
-import com.jetbrains.kmpapp.data.model.ScheduleTargetType
 import com.jetbrains.kmpapp.data.model.StorageStats
 import com.jetbrains.kmpapp.data.model.ThemeMode
 import com.jetbrains.kmpapp.theme.ThemeOverlay
@@ -40,7 +37,6 @@ enum class OtherSubScreen(val depth: Int) {
     DATA_AND_CACHE(2),
     DOCK_SETTINGS(2),
     TASK_SETTINGS(2),
-    ICON_PICKER(2),
     // Подстраницы настроек расписания
     SCHEDULE_DISPLAY(2),
     SCHEDULE_PROGRESS(2),
@@ -54,9 +50,7 @@ enum class OtherSubScreen(val depth: Int) {
     DEBUG_SETTINGS(2),
     EXPERIMENTAL_SETTINGS(3),
     // Сервисы, открытые через блок «Сервисы» на главной «Другого».
-    SERVICE_ROOMS(1),
     SERVICE_TASKS(1),
-    SERVICE_MAP(1),
     SERVICE_NOTES(1),
     SERVICE_COMPARE(1)
 }
@@ -68,7 +62,6 @@ private val SUB_SCREEN_PARENT = mapOf(
     OtherSubScreen.DATA_AND_CACHE to OtherSubScreen.SETTINGS,
     OtherSubScreen.DOCK_SETTINGS to OtherSubScreen.SETTINGS,
     OtherSubScreen.TASK_SETTINGS to OtherSubScreen.SETTINGS,
-    OtherSubScreen.ICON_PICKER to OtherSubScreen.SETTINGS,
     OtherSubScreen.SCHEDULE_DISPLAY to OtherSubScreen.SETTINGS,
     OtherSubScreen.SCHEDULE_PROGRESS to OtherSubScreen.SETTINGS,
     OtherSubScreen.SCHEDULE_CALENDAR to OtherSubScreen.SETTINGS,
@@ -79,9 +72,7 @@ private val SUB_SCREEN_PARENT = mapOf(
     OtherSubScreen.LICENSES to OtherSubScreen.ABOUT,
     OtherSubScreen.DEBUG_SETTINGS to OtherSubScreen.ABOUT,
     OtherSubScreen.EXPERIMENTAL_SETTINGS to OtherSubScreen.DEBUG_SETTINGS,
-    OtherSubScreen.SERVICE_ROOMS to OtherSubScreen.ROOT,
     OtherSubScreen.SERVICE_TASKS to OtherSubScreen.ROOT,
-    OtherSubScreen.SERVICE_MAP to OtherSubScreen.ROOT,
     OtherSubScreen.SERVICE_NOTES to OtherSubScreen.ROOT,
     OtherSubScreen.SERVICE_COMPARE to OtherSubScreen.ROOT
 )
@@ -91,9 +82,7 @@ fun OtherSubScreen.parent(): OtherSubScreen? =
 
 /** Сервисная подстраница для вкладки дока (null — не сервис). */
 fun AppTab.toServiceSubScreen(): OtherSubScreen? = when (this) {
-    AppTab.FREE_ROOMS -> OtherSubScreen.SERVICE_ROOMS
     AppTab.TASKS -> OtherSubScreen.SERVICE_TASKS
-    AppTab.MAP -> OtherSubScreen.SERVICE_MAP
     AppTab.NOTES -> OtherSubScreen.SERVICE_NOTES
     AppTab.COMPARE -> OtherSubScreen.SERVICE_COMPARE
     else -> null
@@ -102,9 +91,7 @@ fun AppTab.toServiceSubScreen(): OtherSubScreen? = when (this) {
 /** Открыт ли в «Другом» сервис (для стрелки «назад» в доке). */
 val OtherSubScreen.isServiceScreen: Boolean
     get() = this in setOf(
-        OtherSubScreen.SERVICE_ROOMS,
         OtherSubScreen.SERVICE_TASKS,
-        OtherSubScreen.SERVICE_MAP,
         OtherSubScreen.SERVICE_NOTES,
         OtherSubScreen.SERVICE_COMPARE
     )
@@ -134,12 +121,9 @@ class OtherViewModel(
     val cheatsAgreed: StateFlow<Boolean?> = repository.cheatsAgreed
     val cheatsBlocked: StateFlow<Boolean> = repository.cheatsBlocked
     val dockTabs: StateFlow<List<AppTab>> = repository.dockTabs
-    val analyticsEnabled: StateFlow<Boolean> = repository.analyticsEnabled
-    val appIcon: StateFlow<String> = repository.appIcon
     val notificationsEnabled: StateFlow<Boolean> = repository.notificationsEnabled
     val notifyMinutesBefore: StateFlow<Int> = repository.notifyMinutesBefore
     val notificationsTargetId: StateFlow<Int?> = repository.notificationsTargetId
-    val vpnWarningEnabled: StateFlow<Boolean> = repository.vpnWarningEnabled
     val askBeforeNoteDelete: StateFlow<Boolean> = repository.askBeforeNoteDelete
 
     fun setShowLessonProgress(enabled: Boolean) {
@@ -181,12 +165,9 @@ class OtherViewModel(
     fun setMatrixTheme(enabled: Boolean) = repository.setMatrixTheme(enabled)
     fun setCheatsAgreed(agreed: Boolean?) = repository.setCheatsAgreed(agreed)
     fun setCheatsBlocked(blocked: Boolean) = repository.setCheatsBlocked(blocked)
-    fun setAnalyticsEnabled(enabled: Boolean) = repository.setAnalyticsEnabled(enabled)
-    fun setAppIcon(name: String) = repository.setAppIcon(name)
     fun setNotificationsEnabled(enabled: Boolean) = repository.setNotificationsEnabled(enabled)
     fun setNotifyMinutesBefore(minutes: Int) = repository.setNotifyMinutesBefore(minutes)
     fun setNotificationsTargetId(targetId: Int?) = repository.setNotificationsTargetId(targetId)
-    fun setVpnWarningEnabled(enabled: Boolean) = repository.setVpnWarningEnabled(enabled)
     fun setAskBeforeNoteDelete(ask: Boolean) = repository.setAskBeforeNoteDelete(ask)
 
     fun setDockTabs(tabs: List<AppTab>) {
@@ -204,11 +185,6 @@ class OtherViewModel(
 
     fun navigateToSubScreen(subScreen: OtherSubScreen) {
         _activeSubScreen.value = subScreen
-        // Сервисные подстраницы пишут свой service_open (с источником) —
-        // здесь их не дублируем, иначе в панели двойной счёт.
-        if (subScreen != OtherSubScreen.ROOT && !subScreen.isServiceScreen) {
-            AppAnalytics.logEvent(AnalyticsEvents.NAV_SCREEN_VIEW, mapOf("screen" to subScreen.name))
-        }
     }
 
     fun resetToRoot() {
@@ -245,12 +221,9 @@ class OtherViewModel(
         }
     }
 
-    // Search, filter, and sort state for ManageSchedulesScreen
+    // Search and sort state for ManageSchedulesScreen
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
-
-    private val _filterType = MutableStateFlow<ScheduleTargetType?>(null)
-    val filterType: StateFlow<ScheduleTargetType?> = _filterType.asStateFlow()
 
     private val _sortOrder = MutableStateFlow(TargetSortOrder.TITLE_ASC)
     val sortOrder: StateFlow<TargetSortOrder> = _sortOrder.asStateFlow()
@@ -258,13 +231,9 @@ class OtherViewModel(
     val filteredSavedTargets: StateFlow<List<ScheduleTarget>> = combine(
         repository.savedTargets,
         _searchQuery,
-        _filterType,
         _sortOrder
-    ) { list, query, filter, sort ->
+    ) { list, query, sort ->
         var result = list
-        if (filter != null) {
-            result = result.filter { it.type == filter }
-        }
         val trimmed = query.trim()
         if (trimmed.isNotEmpty()) {
             result = result.filter {
@@ -282,10 +251,6 @@ class OtherViewModel(
 
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
-    }
-
-    fun setFilterType(type: ScheduleTargetType?) {
-        _filterType.value = type
     }
 
     fun setSortOrder(order: TargetSortOrder) {

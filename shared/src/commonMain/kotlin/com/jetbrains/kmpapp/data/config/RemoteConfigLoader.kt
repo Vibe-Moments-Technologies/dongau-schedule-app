@@ -45,7 +45,7 @@ class RemoteConfigLoader(
         scope.launch {
             try {
                 val response = client.get(CONFIG_URL) {
-                    header("User-Agent", "Krasava-App")
+                    header("User-Agent", "Dongau-Schedule")
                 }
                 if (response.status.value in 200..299) {
                     val remote = json.decodeFromString<RemoteConfig>(response.body<String>())
@@ -60,7 +60,7 @@ class RemoteConfigLoader(
 
     companion object {
         private const val CONFIG_URL =
-            "https://raw.githubusercontent.com/Vibe-Moments-Technologies/krasava-app/gh-pages/config.json"
-        private const val KEY_CONFIG = "krasava_remote_config"
+            "https://raw.githubusercontent.com/Vibe-Moments-Technologies/dongau-schedule-app/gh-pages/config.json"
+        private const val KEY_CONFIG = "dongau_remote_config"
     }
 }

@@ -33,9 +33,7 @@ object DateUtils {
     }
 
     fun getWeekInfo(date: LocalDate): SemesterWeekInfo {
-        // Источник истины — маркеры недель из iCal-фида; расчёт ниже — фолбэк,
-        // пока фид не загружен или не покрывает дату.
-        val weekNumber = SemesterWeeks.weekNumberFor(date) ?: computedWeekNumber(date)
+        val weekNumber = computedWeekNumber(date)
         return SemesterWeekInfo(
             weekNumber = weekNumber.coerceAtLeast(1),
             isEven = weekNumber % 2 == 0

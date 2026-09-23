@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Branch AI Reviewer & Diff Analyzer for krasava-app
+Branch AI Reviewer & Diff Analyzer for dongau-schedule-app
 Analyzes differences between a contributor branch and main,
 runs heuristic & architectural checks for KMP/Compose,
 and generates a deep Russian impact analysis.
@@ -92,7 +92,7 @@ def analyze_feature_impact(file_stats, diff):
     paths = [f['path'].replace('\\', '/') for f in file_stats]
 
     # Schedule module
-    schedule_files = [p for p in paths if 'screens/schedule' in p or 'ScheduleRepository' in p or 'Lesson' in p or 'MireaICal' in p]
+    schedule_files = [p for p in paths if 'screens/schedule' in p or 'ScheduleRepository' in p or 'Lesson' in p or 'DongauSchedule' in p]
     if schedule_files:
         affected_modules.add('📅 **Расписание занятий (Главный экран)**')
         details = []
@@ -100,26 +100,12 @@ def analyze_feature_impact(file_stats, diff):
             details.append('карточки занятий (UI отображения пар, преподавателей, кабинетов)')
         if any('WeekCalendarStrip' in p for p in schedule_files):
             details.append('мини-календарь (переключение дней и недель)')
-        if any('ScheduleRepository' in p or 'MireaICal' in p for p in schedule_files):
-            details.append('загрузка и парсинг iCal-расписания с серверов университета')
+        if any('ScheduleRepository' in p or 'DongauSchedule' in p for p in schedule_files):
+            details.append('загрузка и парсинг JSON-расписания с серверов университета')
         if not details:
             details.append('логика и отображение сетки расписания')
         impacts.append(f"- 📅 **Расписание пар:** Затронуты {', '.join(details)}. Файлы: {', '.join(f'`{Path(p).name}`' for p in schedule_files[:3])}.")
         testing_recommendations.append("Проверьте переключение между 1-й и 2-й неделей и открытие детальной информации о паре.")
-
-    # Free Rooms module
-    rooms_files = [p for p in paths if 'screens/rooms' in p or 'FreeRooms' in p]
-    if rooms_files:
-        affected_modules.add('🏢 **Свободные аудитории**')
-        impacts.append(f"- 🏢 **Свободные аудитории:** Изменена логика поиска свободных кабинетов, фильтрации по дате, номеру пары или кампусам. Файлы: {', '.join(f'`{Path(p).name}`' for p in rooms_files[:3])}.")
-        testing_recommendations.append("Проверьте поиск свободных аудиторий на текущую дату и на воскресенье (когда пары отсутствуют).")
-
-    # Campus Maps module
-    map_files = [p for p in paths if 'screens/map' in p or 'maps/' in p or 'CampusMap' in p or 'MapHtml' in p]
-    if map_files:
-        affected_modules.add('🗺️ **Интерактивные карты кампусов**')
-        impacts.append(f"- 🗺️ **Карты кампусов:** Обновлены векторные схемы этажей, масштабирование WebView или маркеры аудиторий. Файлы: {', '.join(f'`{Path(p).name}`' for p in map_files[:3])}.")
-        testing_recommendations.append("Откройте карты кампусов В-78, С-20 и В-86, проверьте плавность зума и переключение этажей на Android и iOS.")
 
     # Tasks and Subjects module
     tasks_files = [p for p in paths if 'screens/tasks' in p or 'TaskRepository' in p or 'TaskModel' in p]
@@ -226,7 +212,7 @@ def query_ai_review(git_info):
 
     commits_text = "\n".join(f"- {c}" for c in git_info['commits'])
 
-    system_prompt = """Ты — ведущий мобильный архитектор открытого проекта Красава! (Kotlin Multiplatform + Compose Multiplatform для Android и iOS).
+    system_prompt = """Ты — ведущий мобильный архитектор открытого проекта Расписание ДонГУ (Kotlin Multiplatform + Compose Multiplatform для Android и iOS).
 Оцени изменения из ветки контрибьютора относительно main на русском языке.
 
 Формат ответа:
@@ -367,7 +353,7 @@ def generate_report(git_info, domain_analysis, heuristics, ai_review):
     lines.append("")
 
     lines.append("---")
-    lines.append("*💡 Сгенерировано автоматически инструментом Branch AI Reviewer для проекта Красава!.*\n")
+    lines.append("*💡 Сгенерировано автоматически инструментом Branch AI Reviewer для проекта Расписание ДонГУ.*\n")
 
     return "\n".join(lines)
 

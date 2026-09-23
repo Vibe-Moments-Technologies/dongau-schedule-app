@@ -1,5 +1,5 @@
-﻿name: "📅 Нестыковка в расписании (Schedule Data Issue)"
-description: "Сообщите о неверной паре, ошибочном преподавателе, пустой сетке или сбое загрузки iCal."
+name: "📅 Нестыковка в расписании (Schedule Data Issue)"
+description: "Сообщите о неверной паре, ошибочном преподавателе, пустой сетке или сбое загрузки расписания."
 title: "[Расписание]: "
 labels: ["schedule-data", "needs-triage"]
 body:
@@ -7,25 +7,14 @@ body:
     attributes:
       value: |
         ### Заметили расхождение с официальным расписанием?
-        Приложение получает данные через открытый iCal API портала [schedule-of.mirea.ru](https://schedule-of.mirea.ru) и кэширует их на 30 минут.
+        Приложение получает данные через открытый API портала [edu.dongau.ru](https://edu.dongau.ru) и кэширует их на 30 минут.
         Перед отправкой отчёта нажмите иконку обновления в приложении или смахните экран вниз для принудительного обновления кэша.
-
-  - type: dropdown
-    id: target_type
-    attributes:
-      label: Тип расписания
-      options:
-        - "Учебная группа"
-        - "Преподаватель"
-        - "Аудитория"
-    validations:
-      required: true
 
   - type: input
     id: target_name
     attributes:
-      label: Название группы / ФИО преподавателя / Номер аудитории
-      placeholder: "например: ИКБО-01-23 или Иванов И.И."
+      label: Название группы
+      placeholder: "например: Б-ИН-21"
     validations:
       required: true
 
@@ -49,8 +38,8 @@ body:
   - type: input
     id: official_link
     attributes:
-      label: Ссылка на расписание на schedule-of.mirea.ru (при наличии)
-      placeholder: "https://schedule-of.mirea.ru/schedule/api/ical/..."
+      label: Ссылка на расписание на edu.dongau.ru (при наличии)
+      placeholder: "https://edu.dongau.ru/..."
     validations:
       required: false
 

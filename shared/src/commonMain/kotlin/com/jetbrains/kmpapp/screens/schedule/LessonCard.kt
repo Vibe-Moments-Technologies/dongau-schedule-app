@@ -124,7 +124,10 @@ fun LessonCard(
     pageIndicator: Pair<Int, Int>? = null,
     horizontalMargin: androidx.compose.ui.unit.Dp = 16.dp
 ) {
-    val (typeBg, typeTextColor) = getTypeBadgeColors(lesson.lessonType)
+    val typeBg = getLessonCardColor(lesson.lessonType)
+    val cardOnBg = Color.White
+    val cardOnBgDim = Color.White.copy(alpha = 0.7f)
+    val cardOnBgSubtle = Color.White.copy(alpha = 0.45f)
 
     // Заметка к паре (R2): реактивное чтение — превью появляется сразу после
     // сохранения (StateFlow), а ключ точный по targetId+дата+пара: заметки
@@ -152,9 +155,7 @@ fun LessonCard(
             .fillMaxWidth()
             .padding(horizontal = horizontalMargin, vertical = 6.dp),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
+        colors = CardDefaults.cardColors(containerColor = typeBg, contentColor = cardOnBg),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
@@ -178,14 +179,14 @@ fun LessonCard(
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
+                                .background(Color.White.copy(alpha = 0.2f))
                                 .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
                             Text(
                                 text = "${lesson.bellNumber} пара",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
+                                color = cardOnBg
                             )
                         }
 
@@ -195,7 +196,7 @@ fun LessonCard(
                             text = "${lesson.startTime} — ${lesson.endTime}",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = cardOnBgDim
                         )
                     }
 
@@ -206,14 +207,14 @@ fun LessonCard(
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(typeBg)
+                                .background(Color.White.copy(alpha = 0.2f))
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
                             Text(
                                 text = lesson.lessonType.displayName,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = typeTextColor
+                                color = cardOnBg
                             )
                         }
                     }
@@ -226,7 +227,7 @@ fun LessonCard(
                     text = if (showAbbreviatedNames) abbreviateSubjectName(lesson.subject) else lesson.subject,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = cardOnBg
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -243,14 +244,14 @@ fun LessonCard(
                         Icon(
                             imageVector = Icons.Default.Group,
                             contentDescription = "Группы",
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = cardOnBgDim,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = groupsText,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = cardOnBgDim,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -263,14 +264,14 @@ fun LessonCard(
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Преподаватель",
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = cardOnBgDim,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = lesson.teachers.joinToString(", "),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = cardOnBgDim,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -286,14 +287,14 @@ fun LessonCard(
                             Icon(
                                 imageVector = Icons.Default.Group,
                                 contentDescription = "Группы",
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = cardOnBgDim,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = groupsText,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = cardOnBgDim,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.weight(1f)
@@ -302,7 +303,7 @@ fun LessonCard(
                             Icon(
                                 imageVector = Icons.Default.LocationOn,
                                 contentDescription = "Аудитория",
-                                tint = MaterialTheme.colorScheme.secondary,
+                                tint = cardOnBg,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -310,7 +311,7 @@ fun LessonCard(
                                 text = lesson.classrooms.joinToString(", "),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = cardOnBg,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.weight(1f, fill = false)
@@ -322,14 +323,14 @@ fun LessonCard(
                             Icon(
                                 imageVector = Icons.Default.Group,
                                 contentDescription = "Группы",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = cardOnBgSubtle,
                                 modifier = Modifier.size(15.dp)
                             )
                             Spacer(modifier = Modifier.width(5.dp))
                             Text(
                                 text = groupsText,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = cardOnBgSubtle,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.weight(1f)
@@ -346,20 +347,20 @@ fun LessonCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(10.dp))
-                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f))
+                            .background(Color.White.copy(alpha = 0.2f))
                             .padding(horizontal = 10.dp, vertical = 8.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.EditNote,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = cardOnBg,
                             modifier = Modifier.size(14.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = notePreview,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = cardOnBgDim,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f)
@@ -377,7 +378,7 @@ fun LessonCard(
                             text = "$total ${if (total in 2..4) "пары" else "пар"} в это время",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = cardOnBgDim
                         )
                         repeat(total) { index ->
                             Box(
@@ -385,8 +386,8 @@ fun LessonCard(
                                     .size(if (index == current) 6.dp else 4.dp)
                                     .clip(CircleShape)
                                     .background(
-                                        if (index == current) MaterialTheme.colorScheme.primary
-                                        else MaterialTheme.colorScheme.outlineVariant
+                                        if (index == current) cardOnBg
+                                        else cardOnBgSubtle
                                     )
                             )
                         }
@@ -403,14 +404,14 @@ fun LessonCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(2.5.dp)
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        .background(Color.White.copy(alpha = 0.25f))
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(animatedProgress)
                             .height(2.5.dp)
                             .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = if (animatedProgress >= 0.98f) 20.dp else 0.dp))
-                            .background(MaterialTheme.colorScheme.primary)
+                            .background(Color.White)
                     )
                 }
             }
@@ -623,4 +624,13 @@ internal fun getTypeBadgeColors(lessonType: LessonType): Pair<Color, Color> {
     val isDark = MaterialTheme.colorScheme.background.luminance() < 0.5f
     val colors = TYPE_BADGE_COLORS.getValue(lessonType)
     return if (isDark) colors[0] else colors[1]
+}
+
+/** Палитра сплошных карточек пар (site colors ДонГУ): единый цвет в обеих темах. */
+internal fun getLessonCardColor(lessonType: LessonType): Color = when (lessonType) {
+    LessonType.LECTURE -> Color(0xFF4CAF50)
+    LessonType.PRACTICE -> Color(0xFFFF9800)
+    LessonType.LAB -> Color(0xFF9C27B0)
+    LessonType.OTHER -> Color(0xFF9E9E9E)
+    LessonType.ADDITIONAL -> Color(0xFFE91E63)
 }

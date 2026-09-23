@@ -13,12 +13,12 @@ enum class AppErrorCode(
     ERR_TIMEOUT(
         code = "E-102",
         shortTitle = "Таймаут",
-        description = "Превышено время ожидания ответа сервера МИРЭА"
+        description = "Превышено время ожидания ответа сервера расписания"
     ),
     ERR_SERVER_ERROR(
         code = "E-103",
         shortTitle = "Сбой сервера",
-        description = "Сервер расписания РТУ МИРЭА временно недоступен (5xx)"
+        description = "Сервер расписания ДонГУ временно недоступен (5xx)"
     ),
     ERR_NOT_FOUND(
         code = "E-104",
@@ -28,7 +28,7 @@ enum class AppErrorCode(
     ERR_PARSE_ERROR(
         code = "E-105",
         shortTitle = "Ошибка парсинга",
-        description = "Не удалось обработать формат данных iCal"
+        description = "Не удалось обработать данные расписания"
     ),
     ERR_STORAGE_READ(
         code = "E-201",
@@ -59,7 +59,7 @@ enum class AppErrorCode(
                 msg.contains("network") || msg.contains("connect") || msg.contains("unreachable") || msg.contains("no address") -> ERR_NO_NETWORK
                 msg.contains("500") || msg.contains("502") || msg.contains("503") || msg.contains("504") -> ERR_SERVER_ERROR
                 msg.contains("404") || msg.contains("not found") -> ERR_NOT_FOUND
-                msg.contains("parse") || msg.contains("ical") || msg.contains("format") -> ERR_PARSE_ERROR
+                msg.contains("parse") || msg.contains("format") -> ERR_PARSE_ERROR
                 else -> ERR_UNKNOWN
             }
         }

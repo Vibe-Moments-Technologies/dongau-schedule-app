@@ -1,26 +1,6 @@
 import UIKit
 import UserNotifications
-import CFNetwork
 import Shared
-
-// Оба платформенных движка живут в одном файле: один Swift-файл в фазе
-// Sources (NotificationsEngine.swift) детерминированно выпадал из плана
-// сборки Xcode при корректном pbxproj — здесь компиляция гарантирована.
-final class AppIconEngine: AppIconManagerIconEngine {
-    func applyIcon(name: String) {
-        // "default" -> nil = вернуть первичную иконку из asset catalog.
-        // Литерал, а не AppIconManager.ICON_DEFAULT: const val не экспортируется
-        // в Swift (inline на стороне Kotlin), значение зафиксировано в common-коде.
-        let iconName: String? = name == "default" ? nil : name
-        // Ошибки (например, PNG с альфа-каналом iOS отвергает) логируем,
-        // чтобы сбой смены иконки не был немым.
-        UIApplication.shared.setAlternateIconName(iconName) { error in
-            if let error = error {
-                print("AppIconEngine: setAlternateIconName failed: \(error.localizedDescription)")
-            }
-        }
-    }
-}
 
 /// iOS-движок локальных напоминаний о занятиях (UNUserNotificationCenter).
 /// Разрешение запрашивается только в момент включения тумблера в настройках.
@@ -35,8 +15,8 @@ final class NotificationsEngine: NotificationsManagerNotificationEngine {
     /// UserDefaults, чтобы после перезапуска можно было синхронно снять
     /// старую партию без гонки с новой постановкой.
     private var scheduledLessonIds: Set<String>
-    private let scheduledIdsKey = "krasava_scheduled_lesson_ids"
-    private let queue = DispatchQueue(label: "ru.vibemoments.krasava.notifications")
+    private let scheduledIdsKey = "dongau_scheduled_lesson_ids"
+    private let queue = DispatchQueue(label: "ru.vibemoments.dongauschedule.notifications")
 
     init() {
         scheduledLessonIds = Set(UserDefaults.standard.stringArray(forKey: scheduledIdsKey) ?? [])
@@ -131,24 +111,5 @@ final class NotificationPresenter: NSObject, UNUserNotificationCenterDelegate {
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         completionHandler([.banner, .list, .sound])
-    }
-}
-
-/// iOS-детектор VPN: публичного API «VPN включён» нет, используем
-/// канонический «AppsFlyer-style» разбор системных настроек прокси —
-/// ключ __SCOPED__ содержит интерфейсы активных туннелей
-/// (WireGuard, OpenVPN, корпоративные NEPacketTunnelProvider).
-final class VpnEngine: VpnStatusEngine {
-    func isVpnActive() -> Bool {
-        guard let settings = CFNetworkCopySystemProxySettings()?.takeRetainedValue() as? [String: Any],
-              let scoped = settings["__SCOPED__"] as? [String: Any] else { return false }
-        for key in scoped.keys {
-            let k = key.lowercased()
-            if k.contains("tap") || k.contains("tun") || k.contains("ppp")
-                || k.contains("ipsec") || k.contains("utun") {
-                return true
-            }
-        }
-        return false
     }
 }

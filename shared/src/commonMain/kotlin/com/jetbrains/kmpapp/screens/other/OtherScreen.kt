@@ -50,8 +50,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import com.jetbrains.kmpapp.data.analytics.AnalyticsEvents
-import com.jetbrains.kmpapp.data.analytics.AppAnalytics
 import com.jetbrains.kmpapp.screens.components.AppTab
 import com.jetbrains.kmpapp.screens.components.LayeredNavHost
 
@@ -59,7 +57,6 @@ import com.jetbrains.kmpapp.screens.components.LayeredNavHost
 fun OtherScreen(
     viewModel: OtherViewModel,
     tasksViewModel: com.jetbrains.kmpapp.screens.tasks.TasksViewModel = org.koin.compose.viewmodel.koinViewModel(),
-    freeRoomsViewModel: com.jetbrains.kmpapp.screens.rooms.FreeRoomsViewModel = org.koin.compose.viewmodel.koinViewModel(),
     compareViewModel: com.jetbrains.kmpapp.screens.compare.CompareScheduleViewModel = org.koin.compose.viewmodel.koinViewModel(),
     notesViewModel: com.jetbrains.kmpapp.screens.notes.NotesViewModel = org.koin.compose.viewmodel.koinViewModel(),
     onNavigateToTab: (AppTab) -> Unit = {},
@@ -80,8 +77,6 @@ fun OtherScreen(
         },
         // Возврат из другой вкладки с открытой подстраницей — показать сразу.
         initiallyRevealed = remember { activeSubScreen != OtherSubScreen.ROOT },
-        // Карта управляет горизонтальными жестами сама — свайп-назад не вешаем.
-        swipeGestureEnabled = { it != OtherSubScreen.SERVICE_MAP },
         rootContent = {
             OtherMainContent(
                 viewModel = viewModel,
@@ -102,7 +97,6 @@ fun OtherScreen(
                         onOpenDataAndCache = { viewModel.navigateToSubScreen(OtherSubScreen.DATA_AND_CACHE) },
                         onOpenDockSettings = { viewModel.navigateToSubScreen(OtherSubScreen.DOCK_SETTINGS) },
                         onOpenTaskSettings = { viewModel.navigateToSubScreen(OtherSubScreen.TASK_SETTINGS) },
-                        onOpenIconPicker = { viewModel.navigateToSubScreen(OtherSubScreen.ICON_PICKER) },
                         onOpenScheduleDisplay = { viewModel.navigateToSubScreen(OtherSubScreen.SCHEDULE_DISPLAY) },
                         onOpenScheduleProgress = { viewModel.navigateToSubScreen(OtherSubScreen.SCHEDULE_PROGRESS) },
                         onOpenScheduleCalendar = { viewModel.navigateToSubScreen(OtherSubScreen.SCHEDULE_CALENDAR) },
@@ -114,9 +108,6 @@ fun OtherScreen(
                 }
                 OtherSubScreen.DOCK_SETTINGS -> {
                     DockSettingsScreen(viewModel = viewModel, onBack = back)
-                }
-                OtherSubScreen.ICON_PICKER -> {
-                    IconPickerScreen(viewModel = viewModel, onBack = back)
                 }
                 OtherSubScreen.TASK_SETTINGS -> {
                     TaskSettingsScreen(tasksViewModel = tasksViewModel, onBack = back)
@@ -163,17 +154,9 @@ fun OtherScreen(
                 // Сервисы из блока «Сервисы»: те же экраны, что и вкладками,
                 // но подстраницами «Другого» — назад: свайп, система и
                 // стрелка на иконке «Другое» в доке.
-                OtherSubScreen.SERVICE_ROOMS -> {
-                    com.jetbrains.kmpapp.screens.components.PlatformBackHandler(onBack = back)
-                    com.jetbrains.kmpapp.screens.rooms.FreeRoomsScreen(viewModel = freeRoomsViewModel)
-                }
                 OtherSubScreen.SERVICE_TASKS -> {
                     com.jetbrains.kmpapp.screens.components.PlatformBackHandler(onBack = back)
                     com.jetbrains.kmpapp.screens.tasks.TasksScreen(viewModel = tasksViewModel)
-                }
-                OtherSubScreen.SERVICE_MAP -> {
-                    com.jetbrains.kmpapp.screens.components.PlatformBackHandler(onBack = back)
-                    com.jetbrains.kmpapp.screens.map.MapScreen()
                 }
                 OtherSubScreen.SERVICE_NOTES -> {
                     com.jetbrains.kmpapp.screens.components.PlatformBackHandler(onBack = back)
@@ -223,10 +206,6 @@ private fun OtherMainContent(
             tab.toServiceSubScreen()?.let { subScreen ->
                 // То же событие, что и со страницы «Сервисы» — в панели
                 // сценарии сходятся по одному service_open, различает source.
-                AppAnalytics.logEvent(
-                    AnalyticsEvents.NAV_SERVICE_OPEN,
-                    mapOf("service" to tab.name, "source" to "other_block")
-                )
                 onNavigate(subScreen)
             }
         }
@@ -278,7 +257,7 @@ private fun OtherMainContent(
             // 1. University resources card
             OtherNavCard(
                 title = "Ресурсы университета",
-                subtitle = "Личный кабинет, СДО, Пульс и сервисы",
+                subtitle = "Портал, Расписание и Официальный сайт",
                 icon = Icons.Default.School,
                 onClick = { onNavigate(OtherSubScreen.RESOURCES) }
             )

@@ -20,11 +20,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Cloud
-import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.MonitorHeart
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.Button
@@ -58,46 +55,25 @@ data class StudentResource(
 
 val STUDENT_RESOURCES = listOf(
     StudentResource(
-        title = "Личный кабинет студента",
-        description = "Доступ к оценкам, приказам, договорам и электронным сервисам университета.",
-        url = "https://lk.mirea.ru/",
+        title = "Портал ДонГУ",
+        description = "Официальный портал Донского государственного аграрного университета: расписание занятий и страницы электронных сервисов.",
+        url = "https://edu.dongau.ru/",
         icon = Icons.Default.AccountCircle,
         accentColor = Color(0xFF007AFF)
     ),
     StudentResource(
-        title = "СДО МИРЭА",
-        description = "Система дистанционного обучения: курсы, тесты, лекционные материалы и задания.",
-        url = "https://online-edu.mirea.ru/",
+        title = "Расписание занятий",
+        description = "Электронное расписание ДонГУ: поиск по группам, преподавателям и аудиториям.",
+        url = "https://edu.dongau.ru/",
         icon = Icons.Default.School,
         accentColor = Color(0xFF5856D6)
     ),
     StudentResource(
-        title = "Пульс МИРЭА",
-        description = "Сервис для отметок посещаемости на парах, контроля успеваемости и баллов БРС.",
-        url = "https://pulse.mirea.ru/",
+        title = "Официальный сайт университета",
+        description = "Сайт Донского ГАУ: абитуриентам, студентам и сотрудникам.",
+        url = "https://dongau.ru/",
         icon = Icons.Default.MonitorHeart,
-        accentColor = Color(0xFFFF2D55)
-    ),
-    StudentResource(
-        title = "Облако студента",
-        description = "Корпоративное облачное хранилище Nextcloud для учебных файлов и совместной работы.",
-        url = "https://cloud.mirea.ru/",
-        icon = Icons.Default.Cloud,
         accentColor = Color(0xFF00C7BE)
-    ),
-    StudentResource(
-        title = "Справочник студента",
-        description = "База знаний и инструкций: контакты отделений, регламенты и ответы на вопросы.",
-        url = "https://student.mirea.ru/help/ ",
-        icon = Icons.AutoMirrored.Filled.MenuBook,
-        accentColor = Color(0xFFFF9500)
-    ),
-    StudentResource(
-        title = "Предложение идей университету",
-        description = "Платформа студенческих инициатив для предложений по улучшению вуза.",
-        url = "https://vote.mirea.ru/",
-        icon = Icons.Default.Lightbulb,
-        accentColor = Color(0xFFFFCC00)
     )
 )
 
@@ -146,7 +122,7 @@ fun ResourcesScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Text(
-                text = "Официальные цифровые сервисы РТУ МИРЭА, необходимые для учебы и взаимодействия с университетом.",
+                text = "Официальные цифровые сервисы Донского ГАУ (ДонГУ), необходимые для учебы и взаимодействия с университетом.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 20.sp,

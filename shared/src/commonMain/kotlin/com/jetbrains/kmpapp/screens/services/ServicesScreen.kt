@@ -32,19 +32,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.jetbrains.kmpapp.data.analytics.AnalyticsEvents
-import com.jetbrains.kmpapp.data.analytics.AppAnalytics
 import com.jetbrains.kmpapp.screens.components.AppTab
 import com.jetbrains.kmpapp.screens.components.LayeredNavHost
 import com.jetbrains.kmpapp.screens.components.PlatformBackHandler
 import com.jetbrains.kmpapp.screens.components.isService
 import com.jetbrains.kmpapp.screens.compare.CompareScheduleScreen
 import com.jetbrains.kmpapp.screens.compare.CompareScheduleViewModel
-import com.jetbrains.kmpapp.screens.map.MapScreen
 import com.jetbrains.kmpapp.screens.notes.NotesScreen
 import com.jetbrains.kmpapp.screens.notes.NotesViewModel
-import com.jetbrains.kmpapp.screens.rooms.FreeRoomsScreen
-import com.jetbrains.kmpapp.screens.rooms.FreeRoomsViewModel
 import com.jetbrains.kmpapp.screens.tasks.TasksScreen
 import com.jetbrains.kmpapp.screens.tasks.TasksViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,8 +50,7 @@ import androidx.lifecycle.ViewModel
 /**
  * Раздел «Сервисы»: страница-концентратор страниц, не добавленных на панель.
  * Сервис открывается поверх списка (послойная навигация): назад — свайп,
- * системная кнопка или стрелка на иконке «Сервисы» на панели. Карта — без
- * свайпа (жестами управляет сама).
+ * системная кнопка или стрелка на иконке «Сервисы» на панели.
  */
 class ServicesViewModel : ViewModel() {
     private val _activeService = MutableStateFlow<AppTab?>(null)
@@ -64,7 +58,6 @@ class ServicesViewModel : ViewModel() {
 
     fun openService(tab: AppTab) {
         _activeService.value = tab
-        AppAnalytics.logEvent(AnalyticsEvents.NAV_SERVICE_OPEN, mapOf("service" to tab.name, "source" to "services_tab"))
     }
 
     fun closeService() {
@@ -73,16 +66,9 @@ class ServicesViewModel : ViewModel() {
 }
 
 private val SERVICE_DESCRIPTIONS = mapOf(
-    AppTab.FREE_ROOMS to "Поиск свободных аудиторий по корпусу и звонку",
     AppTab.TASKS to "Дедлайны и задания по предметам",
-    AppTab.MAP to "Интерактивные схемы этажей корпусов",
     AppTab.NOTES to "Заметки с цветными полями, хранятся на устройстве",
     AppTab.COMPARE to "Сравнение расписаний нескольких групп"
-)
-
-// Развёрнутые имена только на этой странице; в доке и блоке — краткие.
-private val SERVICE_DISPLAY_TITLES = mapOf(
-    AppTab.FREE_ROOMS to "Свободные аудитории"
 )
 
 @Composable
@@ -90,7 +76,6 @@ fun ServicesScreen(
     viewModel: ServicesViewModel,
     dockTabs: List<AppTab>,
     tasksViewModel: TasksViewModel = org.koin.compose.viewmodel.koinViewModel(),
-    freeRoomsViewModel: FreeRoomsViewModel = org.koin.compose.viewmodel.koinViewModel(),
     compareViewModel: CompareScheduleViewModel = org.koin.compose.viewmodel.koinViewModel(),
     notesViewModel: NotesViewModel = org.koin.compose.viewmodel.koinViewModel(),
     modifier: Modifier = Modifier
@@ -107,8 +92,6 @@ fun ServicesScreen(
         onBackToParent = { viewModel.closeService() },
         // Возврат из другой вкладки с открытым сервисом — показать сразу.
         initiallyRevealed = remember { activeService != null },
-        // Карта управляет горизонтальными жестами сама.
-        swipeGestureEnabled = { it != AppTab.MAP },
         rootContent = {
             Column(
                 modifier = Modifier
@@ -144,17 +127,9 @@ fun ServicesScreen(
         },
         screenContent = { service, back ->
             when (service as AppTab) {
-                AppTab.FREE_ROOMS -> {
-                    PlatformBackHandler(onBack = back)
-                    FreeRoomsScreen(viewModel = freeRoomsViewModel)
-                }
                 AppTab.TASKS -> {
                     PlatformBackHandler(onBack = back)
                     TasksScreen(viewModel = tasksViewModel)
-                }
-                AppTab.MAP -> {
-                    PlatformBackHandler(onBack = back)
-                    MapScreen()
                 }
                 AppTab.NOTES -> {
                     PlatformBackHandler(onBack = back)
@@ -200,7 +175,7 @@ private fun ServiceCard(tab: AppTab, onClick: () -> Unit) {
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = SERVICE_DISPLAY_TITLES[tab] ?: tab.title,
+                    text = tab.title,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface

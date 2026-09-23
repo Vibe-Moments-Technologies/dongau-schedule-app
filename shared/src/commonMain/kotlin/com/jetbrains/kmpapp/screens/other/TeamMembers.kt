@@ -32,7 +32,7 @@ data class TeamMember(
 )
 
 /** Отделы для группировки; карточки выводятся по этому порядку. */
-val teamDepartments = listOf("Разработка", "Карты")
+val teamDepartments = listOf("Разработка")
 
 val projectTeam = listOf(
     TeamMember(
@@ -52,8 +52,8 @@ val projectTeam = listOf(
     ),
     TeamMember(
         name = "KiraSunshine",
-        role = "Картограф",
-        department = "Карты",
+        role = "Разработчик",
+        department = "Разработка",
         avatar = Res.drawable.team_kirasunshine,
         links = listOf(TeamLink(TeamLinkType.GITHUB, "https://github.com/KiraSunshine"))
     )

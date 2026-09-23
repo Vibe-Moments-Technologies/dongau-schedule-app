@@ -87,6 +87,18 @@ fun LicensesScreen(
                     description = "Приложение — свободное ПО с открытым исходным кодом.",
                     onClick = { uriHandler.openUri("${AppVersion.GITHUB_REPO_URL}/blob/main/LICENSE") }
                 )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
+                LicenseItem(
+                    title = "Материнское приложение: Mirea-Schedule",
+                    description = "GNU GPL v3 — проект, на котором основано это приложение.",
+                    onClick = { uriHandler.openUri("https://github.com/l1ratch/MIREA-Schedule") }
+                )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
+                LicenseItem(
+                    title = "Форк Dongau-Schedule",
+                    description = "GNU GPL v3 — адаптация для ДонГУ (KiraSunshine).",
+                    onClick = { uriHandler.openUri("https://github.com/KiraSunshine/Dongau-Schedule") }
+                )
             }
 
             SectionCard(title = "Сторонние библиотеки") {
@@ -101,11 +113,6 @@ fun LicensesScreen(
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
                 LicenseItem(
-                    title = "AppMetrica SDK",
-                    description = "Проприетарная лицензия Yandex."
-                )
-                HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
-                LicenseItem(
                     title = "Material Design 3",
                     description = "Apache License 2.0 — Google LLC."
                 )
@@ -114,12 +121,7 @@ fun LicensesScreen(
             SectionCard(title = "Данные и карты") {
                 LicenseItem(
                     title = "Данные расписания занятий",
-                    description = "Официальный Schedule API университета."
-                )
-                HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
-                LicenseItem(
-                    title = "Схемы и карты корпусов",
-                    description = "Студенческие сервисы университета."
+                    description = "Публичный API расписания ДонГУ (edu.dongau.ru)."
                 )
             }
 

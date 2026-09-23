@@ -19,14 +19,14 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "ru.vibemoments.krasava"
+        applicationId = "ru.vibemoments.dongauschedule"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = (project.findProperty("buildNumber") as? String)?.toIntOrNull()
             ?: System.getenv("BUILD_NUMBER")?.toIntOrNull()
-            ?: 32
+            ?: 1
         // CI подставляет версию канала через tools/versioning.py; в репо — базовая версия линии разработки
-        versionName = "26.0.0"
+        versionName = "26.1.0"
     }
     signingConfigs {
         // Релизный ключ НЕ в репо: CI подаёт его из секретов org
@@ -39,7 +39,7 @@ android {
                     writeBytes(Base64.getDecoder().decode(b64))
                 }
                 storePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("RELEASE_KEY_ALIAS") ?: "krasava"
+                keyAlias = System.getenv("RELEASE_KEY_ALIAS") ?: "dongau"
                 keyPassword = System.getenv("RELEASE_KEY_PASSWORD")
             }
         }

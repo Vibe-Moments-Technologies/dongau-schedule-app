@@ -1,8 +1,5 @@
 package com.jetbrains.kmpapp.data.storage
 
-import com.jetbrains.kmpapp.data.analytics.AnalyticsEvents
-import com.jetbrains.kmpapp.data.analytics.AppAnalytics
-import com.jetbrains.kmpapp.data.appicon.AppIconManager
 import com.jetbrains.kmpapp.data.notifications.NotificationsManager
 import com.jetbrains.kmpapp.data.model.Lesson
 import com.jetbrains.kmpapp.data.model.ScheduleTarget
@@ -88,24 +85,11 @@ class ScheduleStorage(
     private val _cheatsBlocked = MutableStateFlow(false)
     val cheatsBlocked: StateFlow<Boolean> = _cheatsBlocked.asStateFlow()
 
-    private val _analyticsEnabled = MutableStateFlow(true)
-    val analyticsEnabled: StateFlow<Boolean> = _analyticsEnabled.asStateFlow()
-
-    // null = согласие ещё не спрашивали: первый вход ИЛИ обновление со старой версии
-    private val _analyticsConsent = MutableStateFlow<Boolean?>(null)
-    val analyticsConsent: StateFlow<Boolean?> = _analyticsConsent.asStateFlow()
-
-    private val _appIcon = MutableStateFlow(AppIconManager.ICON_DEFAULT)
-    val appIcon: StateFlow<String> = _appIcon.asStateFlow()
-
     private val _notificationsEnabled = MutableStateFlow(false)
     val notificationsEnabled: StateFlow<Boolean> = _notificationsEnabled.asStateFlow()
 
     private val _notificationsTargetId = MutableStateFlow<Int?>(null)
     val notificationsTargetId: StateFlow<Int?> = _notificationsTargetId.asStateFlow()
-
-    private val _vpnWarningEnabled = MutableStateFlow(true)
-    val vpnWarningEnabled: StateFlow<Boolean> = _vpnWarningEnabled.asStateFlow()
 
     private val _notifyMinutesBefore = MutableStateFlow(15)
     val notifyMinutesBefore: StateFlow<Int> = _notifyMinutesBefore.asStateFlow()
@@ -150,21 +134,8 @@ class ScheduleStorage(
         _themeOverlay.value = loadThemeOverlay()
         _cheatsAgreed.value = nullableFlag(KEY_CHEATS_AGREED)
         _cheatsBlocked.value = loadBooleanFlag(KEY_CHEATS_BLOCKED, false)
-        _analyticsEnabled.value = loadBooleanFlag(KEY_ANALYTICS_ENABLED, true)
-        _analyticsConsent.value = nullableFlag(KEY_ANALYTICS_CONSENT)
-        // До первого ответа на диалог согласия ничего не отправляем.
-        AppAnalytics.setEventsEnabled(_analyticsEnabled.value && _analyticsConsent.value != null)
-        // Миграция иконки: прошлые «Новая светлая/тёмная» и «Старая»
-        // (AppIconClassic) слились в дефолт; неизвестные значения → дефолт.
-        _appIcon.value = when (val saved = platformStorage.getString(KEY_APP_ICON)) {
-            null -> AppIconManager.ICON_DEFAULT
-            "AppIconNewLight", "AppIconNewDark", "AppIconClassic" -> AppIconManager.ICON_DEFAULT
-            AppIconManager.ICON_DEFAULT, AppIconManager.ICON_ALT -> saved
-            else -> AppIconManager.ICON_DEFAULT
-        }
         _notificationsEnabled.value = loadBooleanFlag(KEY_NOTIFICATIONS_ENABLED, false)
         _notificationsTargetId.value = platformStorage.getString(KEY_NOTIFICATIONS_TARGET_ID)?.toIntOrNull()
-        _vpnWarningEnabled.value = loadBooleanFlag(KEY_VPN_WARNING_ENABLED, true)
         _notifyMinutesBefore.value =
             platformStorage.getString(KEY_NOTIFY_MINUTES_BEFORE)?.toIntOrNull() ?: 15
         _askBeforeNoteDelete.value = loadBooleanFlag(KEY_ASK_BEFORE_NOTE_DELETE, true)
@@ -245,16 +216,12 @@ class ScheduleStorage(
             } catch (_: Throwable) {}
         }
         _cachedLessons.value = loadedCache
-
         // Now that cached lessons and timestamps are ready, restore selected target!
         try {
             val activeIdStr = platformStorage.getString(KEY_SELECTED_TARGET_ID)
             val activeId = activeIdStr?.toIntOrNull()
             val selected = targets.firstOrNull { it.id == activeId } ?: targets.firstOrNull()
             _selectedTarget.value = selected
-            selected?.let {
-                com.jetbrains.kmpapp.data.model.SemesterWeeks.set(loadWeekMarkers(it.id))
-            }
         } catch (_: Throwable) {}
     }
 
@@ -298,7 +265,6 @@ class ScheduleStorage(
                 println("Failed to persist themeMode: ${e.message}")
             }
         }
-        if (changed) AppAnalytics.logEvent(AnalyticsEvents.SETTINGS_THEME_SET, mapOf("mode" to mode.name))
     }
 
     fun setShowEmptyLessons(enabled: Boolean) {
@@ -416,7 +382,6 @@ class ScheduleStorage(
                 println("Failed to persist theme overlay: ${e.message}")
             }
         }
-        if (changed) AppAnalytics.logEvent(AnalyticsEvents.SETTINGS_THEME_OVERLAY_SET, mapOf("overlay" to overlay.name))
     }
 
     fun setCyberpunkTheme(enabled: Boolean) {
@@ -440,41 +405,7 @@ class ScheduleStorage(
         scope.launch { platformStorage.saveString(KEY_CHEATS_BLOCKED, blocked.toString()) }
     }
 
-    fun setAnalyticsEnabled(enabled: Boolean) {
-        _analyticsEnabled.value = enabled
-        // Ручное включение тумблера = согласие; до ответа на диалог ничего не уходит
-        if (enabled) _analyticsConsent.value = _analyticsConsent.value ?: true
-        AppAnalytics.setEventsEnabled(enabled && _analyticsConsent.value != null)
-        // Opt-in/opt-out — единственное событие, которое шлём при выключении
-        // (до того как шлюз закрылся): важно знать долю отказов.
-        AppAnalytics.logEvent(AnalyticsEvents.SETTINGS_ANALYTICS_CHANGED, mapOf("enabled" to enabled.toString()))
-        scope.launch { platformStorage.saveString(KEY_ANALYTICS_ENABLED, enabled.toString()) }
-    }
-
-    /** Ответ на диалог первого запуска: сразу задаёт и согласие, и тумблер. */
-    fun setAnalyticsConsent(accepted: Boolean) {
-        _analyticsConsent.value = accepted
-        _analyticsEnabled.value = accepted
-        AppAnalytics.setEventsEnabled(accepted)
-        scope.launch {
-            platformStorage.saveString(KEY_ANALYTICS_CONSENT, accepted.toString())
-            platformStorage.saveString(KEY_ANALYTICS_ENABLED, accepted.toString())
-        }
-    }
-
-    /** Выбор иконки приложения; применяется немедленно (iOS), хранится для UI. */
-    fun setAppIcon(name: String) {
-        val changed = _appIcon.value != name
-        _appIcon.value = name
-        AppIconManager.apply(name)
-        scope.launch { platformStorage.saveString(KEY_APP_ICON, name) }
-        if (changed) {
-            AppAnalytics.logEvent(AnalyticsEvents.SETTINGS_APP_ICON_CHANGED, mapOf("icon" to name))
-        }
-    }
-
     fun setNotificationsEnabled(enabled: Boolean) {
-        val changed = _notificationsEnabled.value != enabled
         _notificationsEnabled.value = enabled
         if (enabled) {
             if (_notificationsTargetId.value == null) {
@@ -484,12 +415,6 @@ class ScheduleStorage(
             NotificationsManager.requestAuthorization()
         }
         scope.launch { platformStorage.saveString(KEY_NOTIFICATIONS_ENABLED, enabled.toString()) }
-        if (changed) {
-            AppAnalytics.logEvent(AnalyticsEvents.SETTINGS_NOTIFICATIONS_CHANGED, mapOf(
-                "enabled" to enabled.toString(),
-                "minutes_before" to _notifyMinutesBefore.value.toString()
-            ))
-        }
     }
 
     fun setNotifyMinutesBefore(minutes: Int) {
@@ -500,11 +425,6 @@ class ScheduleStorage(
     fun setNotificationsTargetId(targetId: Int?) {
         _notificationsTargetId.value = targetId
         persistNotificationsTargetId(targetId)
-    }
-
-    fun setVpnWarningEnabled(enabled: Boolean) {
-        _vpnWarningEnabled.value = enabled
-        scope.launch { platformStorage.saveString(KEY_VPN_WARNING_ENABLED, enabled.toString()) }
     }
 
     private fun persistNotificationsTargetId(targetId: Int?) {
@@ -579,13 +499,6 @@ class ScheduleStorage(
         // Аналитика: только тип (GROUP/TEACHER/AUDITORIUM) и количество —
         // ни id, ни название группы/преподавателя наружу не уходят.
         if (wasNew) {
-            AppAnalytics.logEvent(
-                AnalyticsEvents.SCHEDULE_TARGET_ADDED,
-                mapOf(
-                    "type" to target.type.name,
-                    "count" to _savedTargets.value.size.toString()
-                )
-            )
         }
     }
 
@@ -605,28 +518,14 @@ class ScheduleStorage(
         lastSyncTimes.remove(targetId)
         platformStorage.remove(KEY_LESSONS_PREFIX + targetId)
         platformStorage.remove(KEY_LAST_SYNC_PREFIX + targetId)
-        platformStorage.remove(KEY_WEEK_MARKERS_PREFIX + targetId)
-        _selectedTarget.value?.let {
-            com.jetbrains.kmpapp.data.model.SemesterWeeks.set(loadWeekMarkers(it.id))
-        }
         persistTargets()
         if (removed != null) {
-            AppAnalytics.logEvent(
-                AnalyticsEvents.SCHEDULE_TARGET_REMOVED,
-                mapOf(
-                    "type" to removed.type.name,
-                    "count" to _savedTargets.value.size.toString()
-                )
-            )
         }
     }
 
     fun selectTarget(target: ScheduleTarget?) {
         _selectedTarget.value = target
         persistSelectedTargetId(target?.id)
-        com.jetbrains.kmpapp.data.model.SemesterWeeks.set(
-            target?.let { loadWeekMarkers(it.id) } ?: emptyList()
-        )
     }
 
     fun selectTargetById(targetId: Int) {
@@ -647,29 +546,6 @@ class ScheduleStorage(
                 println("Failed to persist lessons for $targetId: ${e.message}")
             }
         }
-    }
-
-    /** Маркеры недель из iCal-фида: активная цель определяет нумерацию в UI. */
-    fun saveWeekMarkers(targetId: Int, markers: List<com.jetbrains.kmpapp.data.model.WeekMarker>) {
-        if (markers.isEmpty()) return
-        scope.launch {
-            try {
-                platformStorage.saveString(KEY_WEEK_MARKERS_PREFIX + targetId, json.encodeToString(markers))
-            } catch (e: Exception) {
-                println("Failed to persist week markers for $targetId: ${e.message}")
-            }
-        }
-        if (_selectedTarget.value?.id == targetId) {
-            com.jetbrains.kmpapp.data.model.SemesterWeeks.set(markers)
-        }
-    }
-
-    fun loadWeekMarkers(targetId: Int): List<com.jetbrains.kmpapp.data.model.WeekMarker> = try {
-        val s = platformStorage.getString(KEY_WEEK_MARKERS_PREFIX + targetId)
-        if (s.isNullOrBlank()) emptyList()
-        else try { json.decodeFromString(s) } catch (_: Throwable) { emptyList() }
-    } catch (_: Throwable) {
-        emptyList()
     }
 
     fun getLessons(targetId: Int): List<Lesson>? {
@@ -702,16 +578,12 @@ class ScheduleStorage(
         for (target in _savedTargets.value) {
             platformStorage.remove(KEY_LESSONS_PREFIX + target.id)
             platformStorage.remove(KEY_LAST_SYNC_PREFIX + target.id)
-            platformStorage.remove(KEY_WEEK_MARKERS_PREFIX + target.id)
         }
-        com.jetbrains.kmpapp.data.model.SemesterWeeks.set(emptyList())
     }
 
     fun resetAllData() {
         val cheatsAgreedBefore = _cheatsAgreed.value
         val cheatsBlockedBefore = _cheatsBlocked.value
-        val analyticsEnabledBefore = _analyticsEnabled.value
-        val analyticsConsentBefore = _analyticsConsent.value
         val notificationsEnabledBefore = _notificationsEnabled.value
         val notifyMinutesBeforeBefore = _notifyMinutesBefore.value
         val askBeforeNoteDeleteBefore = _askBeforeNoteDelete.value
@@ -733,26 +605,18 @@ class ScheduleStorage(
         _themeOverlay.value = ThemeOverlay.NONE
         _cheatsAgreed.value = cheatsAgreedBefore
         _cheatsBlocked.value = cheatsBlockedBefore
-        _analyticsEnabled.value = analyticsEnabledBefore
-        _analyticsConsent.value = analyticsConsentBefore
         _notificationsEnabled.value = notificationsEnabledBefore
         _notificationsTargetId.value = null
-        _vpnWarningEnabled.value = true
         _notifyMinutesBefore.value = notifyMinutesBeforeBefore
         _askBeforeNoteDelete.value = askBeforeNoteDeleteBefore
         _notePages.value = com.jetbrains.kmpapp.data.model.defaultNotePages()
         lastSyncTimes.clear()
-        com.jetbrains.kmpapp.data.model.SemesterWeeks.set(emptyList())
         scope.launch {
             if (cheatsAgreedBefore == null) platformStorage.remove(KEY_CHEATS_AGREED)
             else platformStorage.saveString(KEY_CHEATS_AGREED, cheatsAgreedBefore.toString())
             platformStorage.saveString(KEY_CHEATS_BLOCKED, cheatsBlockedBefore.toString())
-            platformStorage.saveString(KEY_ANALYTICS_ENABLED, analyticsEnabledBefore.toString())
-            if (analyticsConsentBefore == null) platformStorage.remove(KEY_ANALYTICS_CONSENT)
-            else platformStorage.saveString(KEY_ANALYTICS_CONSENT, analyticsConsentBefore.toString())
             platformStorage.saveString(KEY_NOTIFICATIONS_ENABLED, notificationsEnabledBefore.toString())
             platformStorage.remove(KEY_NOTIFICATIONS_TARGET_ID)
-            platformStorage.saveString(KEY_VPN_WARNING_ENABLED, true.toString())
             platformStorage.saveString(KEY_NOTIFY_MINUTES_BEFORE, notifyMinutesBeforeBefore.toString())
             platformStorage.saveString(KEY_ASK_BEFORE_NOTE_DELETE, askBeforeNoteDeleteBefore.toString())
             platformStorage.saveString(KEY_NOTES, json.encodeToString(_notePages.value))
@@ -818,43 +682,37 @@ class ScheduleStorage(
     }
 
     companion object {
-        private const val KEY_SAVED_TARGETS = "krasava_saved_targets"
-        private const val KEY_SELECTED_TARGET_ID = "krasava_selected_target_id"
-        private const val KEY_LESSONS_PREFIX = "krasava_lessons_"
-        private const val KEY_WEEK_MARKERS_PREFIX = "krasava_week_markers_"
-        private const val KEY_LAST_SYNC_PREFIX = "krasava_last_sync_"
-        private const val KEY_SHOW_EMPTY_LESSONS = "krasava_show_empty_lessons"
-        private const val KEY_SHOW_LESSON_PROGRESS = "krasava_show_lesson_progress"
-        private const val KEY_SHOW_EMPTY_LESSON_PROGRESS = "krasava_show_empty_lesson_progress"
-        private const val KEY_SHOW_BREAK_PROGRESS = "krasava_show_break_progress"
-        private const val KEY_CALENDAR_COLLAPSED = "krasava_calendar_collapsed"
-        private const val KEY_CALENDAR_SWIPE_COLLAPSE = "krasava_calendar_swipe_collapse"
-        private const val KEY_HIDE_ADDITIONAL_LESSONS = "krasava_hide_additional_lessons"
-        private const val KEY_AUTO_SCROLL_CURRENT_LESSON = "krasava_auto_scroll_current_lesson"
-        private const val KEY_SHOW_ABBREVIATED_NAMES = "krasava_show_abbreviated_names"
-        private const val KEY_APP_THEME = "krasava_app_theme"
-        private const val KEY_DOCK_TABS = "krasava_dock_tabs_order"
-        private const val KEY_SAKURA_THEME = "krasava_sakura_theme_secret"
-        private const val KEY_CYBERPUNK_THEME = "krasava_cyberpunk_theme_secret"
-        private const val KEY_MATRIX_THEME = "krasava_matrix_theme_secret"
-        private const val KEY_THEME_OVERLAY = "krasava_theme_overlay"
-        private const val KEY_CHEATS_AGREED = "krasava_cheats_agreed"
-        private const val KEY_CHEATS_BLOCKED = "krasava_cheats_blocked"
-        private const val KEY_ANALYTICS_ENABLED = "krasava_analytics_enabled"
-        private const val KEY_ANALYTICS_CONSENT = "krasava_analytics_consent"
-        private const val KEY_APP_ICON = "krasava_app_icon"
-        private const val KEY_NOTIFICATIONS_ENABLED = "krasava_notifications_enabled"
-        private const val KEY_NOTIFICATIONS_TARGET_ID = "krasava_notifications_target_id"
-        private const val KEY_VPN_WARNING_ENABLED = "krasava_vpn_warning_enabled"
-        private const val KEY_NOTIFY_MINUTES_BEFORE = "krasava_notify_minutes_before"
-        private const val KEY_ASK_BEFORE_NOTE_DELETE = "krasava_ask_before_note_delete"
-        private const val KEY_NOTES = "krasava_notes_pages"
+        private const val KEY_SAVED_TARGETS = "dongau_saved_targets"
+        private const val KEY_SELECTED_TARGET_ID = "dongau_selected_target_id"
+        private const val KEY_LESSONS_PREFIX = "dongau_lessons_"
+        private const val KEY_LAST_SYNC_PREFIX = "dongau_last_sync_"
+        private const val KEY_SHOW_EMPTY_LESSONS = "dongau_show_empty_lessons"
+        private const val KEY_SHOW_LESSON_PROGRESS = "dongau_show_lesson_progress"
+        private const val KEY_SHOW_EMPTY_LESSON_PROGRESS = "dongau_show_empty_lesson_progress"
+        private const val KEY_SHOW_BREAK_PROGRESS = "dongau_show_break_progress"
+        private const val KEY_CALENDAR_COLLAPSED = "dongau_calendar_collapsed"
+        private const val KEY_CALENDAR_SWIPE_COLLAPSE = "dongau_calendar_swipe_collapse"
+        private const val KEY_HIDE_ADDITIONAL_LESSONS = "dongau_hide_additional_lessons"
+        private const val KEY_AUTO_SCROLL_CURRENT_LESSON = "dongau_auto_scroll_current_lesson"
+        private const val KEY_SHOW_ABBREVIATED_NAMES = "dongau_show_abbreviated_names"
+        private const val KEY_APP_THEME = "dongau_app_theme"
+        private const val KEY_DOCK_TABS = "dongau_dock_tabs_order"
+        private const val KEY_SAKURA_THEME = "dongau_sakura_theme_secret"
+        private const val KEY_CYBERPUNK_THEME = "dongau_cyberpunk_theme_secret"
+        private const val KEY_MATRIX_THEME = "dongau_matrix_theme_secret"
+        private const val KEY_THEME_OVERLAY = "dongau_theme_overlay"
+        private const val KEY_CHEATS_AGREED = "dongau_cheats_agreed"
+        private const val KEY_CHEATS_BLOCKED = "dongau_cheats_blocked"
+        private const val KEY_NOTIFICATIONS_ENABLED = "dongau_notifications_enabled"
+        private const val KEY_NOTIFICATIONS_TARGET_ID = "dongau_notifications_target_id"
+        private const val KEY_NOTIFY_MINUTES_BEFORE = "dongau_notify_minutes_before"
+        private const val KEY_ASK_BEFORE_NOTE_DELETE = "dongau_ask_before_note_delete"
+        private const val KEY_NOTES = "dongau_notes_pages"
         // Дефолт дока для НОВЫХ установок (решение владельца): Существующие
         // пользователи не затрагиваются — их сохранённый док доверяется.
         val DEFAULT_DOCK_TABS = listOf(
             AppTab.SCHEDULE,
-            AppTab.MAP,
-            AppTab.SERVICES,
+            AppTab.TASKS,
             AppTab.OTHER
         )
     }

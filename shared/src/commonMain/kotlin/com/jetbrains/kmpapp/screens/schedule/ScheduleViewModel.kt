@@ -3,8 +3,6 @@ package com.jetbrains.kmpapp.screens.schedule
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jetbrains.kmpapp.data.ScheduleRepository
-import com.jetbrains.kmpapp.data.analytics.AnalyticsEvents
-import com.jetbrains.kmpapp.data.analytics.AppAnalytics
 import com.jetbrains.kmpapp.data.model.DateUtils
 import com.jetbrains.kmpapp.data.model.Lesson
 import com.jetbrains.kmpapp.data.model.ScheduleSlot
@@ -42,7 +40,6 @@ class ScheduleViewModel(
     val calendarSwipeCollapse: StateFlow<Boolean> = repository.calendarSwipeCollapse
     val autoScrollToCurrentLesson: StateFlow<Boolean> = repository.autoScrollToCurrentLesson
     val showAbbreviatedNames: StateFlow<Boolean> = repository.showAbbreviatedNames
-    val vpnWarningEnabled: StateFlow<Boolean> = repository.vpnWarningEnabled
 
     private var lastAutoScrolledDate: LocalDate? = null
     private var lastAutoScrolledTargetId: Int? = null
@@ -80,11 +77,6 @@ class ScheduleViewModel(
     private val _currentMinutes = MutableStateFlow(DateUtils.currentTimeMinutes())
     val currentMinutes: StateFlow<Int> = _currentMinutes.asStateFlow()
 
-    // VPN ломает доступ к серверам МИРЭА (только с IP России) —
-    // обновляется существующим 30-секундным тиком, UI показывает плашку.
-    private val _isVpnActive = MutableStateFlow(com.jetbrains.kmpapp.data.network.detectVpnActive())
-    val isVpnActive: StateFlow<Boolean> = _isVpnActive.asStateFlow()
-
     init {
         viewModelScope.launch {
             repository.refreshStatus.collect { status ->
@@ -102,7 +94,6 @@ class ScheduleViewModel(
                 val isForeground = repository.isLowPowerMode.value.let { lowPower ->
                     // Update current minute
                     _currentMinutes.value = DateUtils.currentTimeMinutes()
-                    _isVpnActive.value = com.jetbrains.kmpapp.data.network.detectVpnActive()
                     val sleepTime = if (lowPower) 60_000L else 30_000L
                     kotlinx.coroutines.delay(sleepTime)
                 }
@@ -215,7 +206,6 @@ class ScheduleViewModel(
     fun selectLessonForDetail(lesson: Lesson?) {
         _selectedLessonForDetail.value = lesson
         if (lesson != null) {
-            AppAnalytics.logEvent(AnalyticsEvents.FEATURE_LESSON_DETAIL, mapOf("screen" to "lesson_detail"))
         }
     }
 

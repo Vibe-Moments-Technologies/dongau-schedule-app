@@ -29,14 +29,11 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Surface
 import com.jetbrains.kmpapp.data.model.Lesson
 import com.jetbrains.kmpapp.data.model.RefreshStatus
-import com.jetbrains.kmpapp.data.analytics.AnalyticsEvents
-import com.jetbrains.kmpapp.data.analytics.AppAnalytics
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -123,9 +120,6 @@ private fun ScheduleMainContent(
     // всё дерево расписания. State уходит вниз и читается только в карточках
     // «сегодня» (см. LessonCard).
     val currentMinutesState = viewModel.currentMinutes.collectAsState()
-    val isVpnActive by viewModel.isVpnActive.collectAsState()
-    val vpnWarningEnabled by viewModel.vpnWarningEnabled.collectAsState()
-    var isVpnBannerDismissed by remember(isVpnActive, vpnWarningEnabled) { mutableStateOf(false) }
 
     var showAddSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -251,51 +245,6 @@ private fun ScheduleMainContent(
                         swipeCollapseEnabled = calendarSwipeCollapse,
                         modifier = Modifier.padding(top = 4.dp, bottom = 2.dp)
                     )
-                }
-
-                // Серверы МИРЭА доступны только с IP России: при включённом
-                // VPN расписание не обновится — предупреждаем заранее.
-                if (isVpnActive && vpnWarningEnabled && !isVpnBannerDismissed) {
-                    LaunchedEffect(Unit) {
-                        AppAnalytics.logEvent(AnalyticsEvents.FEATURE_VPN_BANNER_SHOWN)
-                    }
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = Color(0xFFFFE0B2),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 2.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(start = 12.dp, end = 4.dp, top = 6.dp, bottom = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.VpnKey,
-                                contentDescription = null,
-                                tint = Color(0xFF8A4B08),
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Включён VPN — расписание может не обновиться",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color(0xFF5D3508),
-                                modifier = Modifier.weight(1f)
-                            )
-                            IconButton(
-                                onClick = { isVpnBannerDismissed = true },
-                                modifier = Modifier.size(28.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Скрыть предупреждение",
-                                    tint = Color(0xFF8A4B08),
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
-                        }
-                    }
                 }
 
                 PullToRefreshBox(

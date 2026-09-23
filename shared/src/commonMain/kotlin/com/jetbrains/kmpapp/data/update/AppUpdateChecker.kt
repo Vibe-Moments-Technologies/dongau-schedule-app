@@ -82,7 +82,7 @@ class AppUpdateChecker(
     private suspend fun fetchFeedResult(): UpdateCheckResult? {
         return try {
             val response = client.get(AppVersion.UPDATE_FEED_URL) {
-                header("User-Agent", "Krasava-App")
+                header("User-Agent", "Dongau-Schedule-App")
             }
             if (response.status.value !in 200..299) return null
             val feed = json.decodeFromString<VersionFeed>(response.body<String>())
@@ -119,7 +119,7 @@ class AppUpdateChecker(
     private suspend fun fetchLatestReleaseResult(): UpdateCheckResult? {
         return try {
             val response = client.get("https://api.github.com/repos/$GITHUB_REPO/releases/latest") {
-                header("User-Agent", "Krasava-App")
+                header("User-Agent", "Dongau-Schedule-App")
             }
             if (response.status.value !in 200..299) return null
             val release = response.body<GitHubRelease>()

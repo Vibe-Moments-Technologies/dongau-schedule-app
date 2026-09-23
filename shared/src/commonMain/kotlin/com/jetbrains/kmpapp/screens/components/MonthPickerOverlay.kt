@@ -310,11 +310,12 @@ fun MonthPickerOverlay(
     }
 }
 
-/** Цвета точек пар — единый источник для ленточного и месячного календарей. */
+/** Цвета точек пар — единый источник для ленточного и месячного календарей.
+ *  Синхронизированы с палитрой сплошных карточек пар (site colors ДонГУ). */
 internal fun getLessonDotColor(type: LessonType, isDark: Boolean): Color = when (type) {
-    LessonType.LECTURE -> if (isDark) Color(0xFF38BDF8) else Color(0xFF0284C7)
-    LessonType.PRACTICE -> if (isDark) Color(0xFF4ADE80) else Color(0xFF16A34A)
-    LessonType.LAB -> if (isDark) Color(0xFFFB923C) else Color(0xFFEA580C)
-    LessonType.OTHER -> if (isDark) Color(0xFFC084FC) else Color(0xFF9333EA)
+    LessonType.LECTURE -> if (isDark) Color(0xFF4ADE80) else Color(0xFF16A34A)
+    LessonType.PRACTICE -> if (isDark) Color(0xFFFBBF24) else Color(0xFFD97706)
+    LessonType.LAB -> if (isDark) Color(0xFFA78BFA) else Color(0xFF8B5CF6)
+    LessonType.OTHER -> if (isDark) Color(0xFF9CA3AF) else Color(0xFF6B7280)
     LessonType.ADDITIONAL -> if (isDark) Color(0xFFF472B6) else Color(0xFFDB2777)
 }

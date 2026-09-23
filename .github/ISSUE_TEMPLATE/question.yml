@@ -1,4 +1,4 @@
-﻿name: "💬 Вопрос или консультация (Question / Help)"
+name: "💬 Вопрос или консультация (Question / Help)"
 description: "Задайте вопрос по установке (APK / IPA / сертификаты), настройке или функционалу приложения."
 title: "[Вопрос]: "
 labels: ["question", "needs-triage"]

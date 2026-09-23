@@ -42,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
@@ -52,8 +51,7 @@ import androidx.compose.ui.unit.sp
 import com.jetbrains.kmpapp.data.model.AppVersion
 import com.jetbrains.kmpapp.screens.components.PlatformBackHandler
 import kmp_app_template.shared.generated.resources.Res
-import kmp_app_template.shared.generated.resources.appicon_new_dark
-import kmp_app_template.shared.generated.resources.appicon_new_light
+import kmp_app_template.shared.generated.resources.appicon_dongau
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -106,11 +104,8 @@ fun AboutScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
             Image(
-                painter = painterResource(
-                    if (isDarkTheme) Res.drawable.appicon_new_dark else Res.drawable.appicon_new_light
-                ),
+                painter = painterResource(Res.drawable.appicon_dongau),
                 contentDescription = "Иконка приложения",
                 modifier = Modifier
                     .size(84.dp)
@@ -139,7 +134,7 @@ fun AboutScreen(
                 }
             ) {
                 Text(
-                    text = "Красава!",
+                    text = "Расписание ДонГУ",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -158,7 +153,7 @@ fun AboutScreen(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Наши права защищены · Не связано с РТУ МИРЭА",
+                    text = "Проект неофициальный · Не связан с ДонГУ",
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
                 )

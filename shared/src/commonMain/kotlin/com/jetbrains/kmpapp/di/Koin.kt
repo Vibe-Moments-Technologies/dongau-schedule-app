@@ -1,7 +1,7 @@
 package com.jetbrains.kmpapp.di
 
 import com.jetbrains.kmpapp.data.ScheduleRepository
-import com.jetbrains.kmpapp.data.api.MireaScheduleApi
+import com.jetbrains.kmpapp.data.api.DongauScheduleApi
 import com.jetbrains.kmpapp.data.config.RemoteConfigLoader
 import com.jetbrains.kmpapp.data.storage.LessonNotesStorage
 import com.jetbrains.kmpapp.data.storage.PlatformStorage
@@ -9,8 +9,6 @@ import com.jetbrains.kmpapp.data.storage.ScheduleStorage
 import com.jetbrains.kmpapp.data.update.AppUpdateChecker
 import com.jetbrains.kmpapp.screens.other.OtherViewModel
 import com.jetbrains.kmpapp.screens.schedule.ScheduleViewModel
-import com.jetbrains.kmpapp.data.FreeRoomsRepository
-import com.jetbrains.kmpapp.screens.rooms.FreeRoomsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.ContentType
@@ -52,12 +50,11 @@ val dataModule = module {
     singleOf(::PlatformPowerManager)
     singleOf(::PlatformStorage)
     singleOf(::UnifiedSyncManager)
-    singleOf(::MireaScheduleApi)
+    singleOf(::DongauScheduleApi)
     singleOf(::ScheduleStorage)
     singleOf(::LessonNotesStorage)
     singleOf(::ScheduleRepository)
     singleOf(::AppUpdateChecker)
-    singleOf(::FreeRoomsRepository)
     singleOf(::TaskRepository)
     singleOf(::RemoteConfigLoader)
 }
@@ -65,7 +62,6 @@ val dataModule = module {
 val viewModelModule = module {
     factoryOf(::ScheduleViewModel)
     factoryOf(::OtherViewModel)
-    factoryOf(::FreeRoomsViewModel)
     factoryOf(::TasksViewModel)
     factoryOf(::CompareScheduleViewModel)
     factoryOf(::NotesViewModel)

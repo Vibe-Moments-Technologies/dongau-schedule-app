@@ -16,8 +16,8 @@ data class RemoteConfig(
 
 @Serializable
 data class SocialLinks(
-    val github: String = "https://github.com/Vibe-Moments-Technologies/krasava-app",
-    val telegram: String = "https://t.me/MIREA_Schedule",
+    val github: String = "https://github.com/Vibe-Moments-Technologies/dongau-schedule-app",
+    val telegram: String = "",
     val discord: String = "",
     val boosty: String = ""
 )
