@@ -30,8 +30,8 @@ BUNDLE_ID = "ru.vibemoments.dongauschedule"
 DEVELOPER_NAME = "Vibe Moments Technologies"
 TINT_COLOR = "4F46E5"
 APP_DESCRIPTION = (
-    "Расписание пар, поиск свободных аудиторий, интерактивные карты "
-    "корпусов, задачи и офлайн-кеш."
+    "Расписание пар ДонГУ, задачи, конспекты, сравнение расписаний "
+    "и офлайн-кеш."
 )
 
 # Канал → имя записи в источнике (по нему запись заменяется при обновлении).
@@ -99,7 +99,7 @@ def build_app_entry(repo, channel, version, ipa_url):
         "bundleIdentifier": BUNDLE_ID,
         "developerName": DEVELOPER_NAME,
         "localizedDescription": description,
-        "iconURL": f"https://raw.githubusercontent.com/{repo}/main/shared/src/commonMain/composeResources/drawable/appicon_new_light.png",
+        "iconURL": f"https://raw.githubusercontent.com/{repo}/main/shared/src/commonMain/composeResources/drawable/appicon_dongau.png",
         "version": version,
         "versionDate": now.isoformat(),
         "downloadURL": ipa_url,
