@@ -29,7 +29,7 @@ object AppVersion {
 
     const val IS_CRITICAL = false
     const val MIN_SUPPORTED_BUILD = 1
-    const val CHANGELOG = "Первая версия «Расписание ДонГУ» на новой базе: расписание занятий ДонГУ (группы), задачи, конспекты, сравнение расписаний, напоминания о парах, темы оформления, цветные карточки пар."
+    const val CHANGELOG = "Первая версия «Расписание ДонГУ» на новой базе: расписание занятий ДонГУ (группы), задачи, сравнение расписаний, напоминания о парах, темы оформления, цветные карточки пар."
 
     const val DISPLAY_VERSION = "Версия $VERSION_NAME (сборка $BUILD_NUMBER)"
     const val GITHUB_REPO = "Vibe-Moments-Technologies/dongau-schedule-app"

@@ -151,31 +151,6 @@ fun ScheduleCalendarSettingsScreen(
     }
 }
 
-// ── Параметры сервисов: Конспекты ────────────────────────────
-
-@Composable
-fun ServiceNotesSettingsScreen(
-    viewModel: OtherViewModel,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    PlatformBackHandler(onBack = onBack)
-    val askBeforeNoteDelete by viewModel.askBeforeNoteDelete.collectAsState()
-
-    SettingsSubScreen(
-        title = "Конспекты",
-        onBack = onBack,
-        modifier = modifier
-    ) {
-        SettingsToggleRow(
-            title = "Спрашивать при удалении",
-            subtitle = "Подтверждение перед удалением страниц и полей в конспектах",
-            checked = askBeforeNoteDelete,
-            onCheckedChange = { viewModel.setAskBeforeNoteDelete(it) }
-        )
-    }
-}
-
 // ── Общие композаблы ─────────────────────────────────────────
 
 @Composable

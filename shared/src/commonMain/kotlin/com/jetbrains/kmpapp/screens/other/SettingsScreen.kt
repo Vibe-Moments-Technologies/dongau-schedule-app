@@ -73,7 +73,6 @@ fun SettingsScreen(
     onOpenScheduleDisplay: () -> Unit = {},
     onOpenScheduleProgress: () -> Unit = {},
     onOpenScheduleCalendar: () -> Unit = {},
-    onOpenServiceSettings: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     PlatformBackHandler(onBack = onBack)
@@ -92,7 +91,6 @@ fun SettingsScreen(
     val notifyMinutesBefore by viewModel.notifyMinutesBefore.collectAsState()
     val notificationsTargetId by viewModel.notificationsTargetId.collectAsState()
     val savedTargets by viewModel.savedTargets.collectAsState()
-    val askBeforeNoteDelete by viewModel.askBeforeNoteDelete.collectAsState()
 
     var sakuraTapCount by remember { mutableIntStateOf(0) }
     var lastSakuraTapMark by remember { mutableStateOf<kotlin.time.TimeMark?>(null) }
@@ -295,18 +293,6 @@ fun SettingsScreen(
                     title = "Календарь",
                     subtitle = "Сворачивание свайпом",
                     onClick = onOpenScheduleCalendar
-                )
-            }
-
-            // Section: Service settings
-            SettingsSectionCard(
-                title = "Параметры сервисов",
-                icon = Icons.Default.EditNote
-            ) {
-                SettingsNavigationRow(
-                    title = "Конспекты",
-                    subtitle = "Настройки блокнота и заметок",
-                    onClick = onOpenServiceSettings
                 )
             }
 

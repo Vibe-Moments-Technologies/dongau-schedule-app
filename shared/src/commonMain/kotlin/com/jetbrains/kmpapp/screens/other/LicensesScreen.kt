@@ -118,7 +118,7 @@ fun LicensesScreen(
                 )
             }
 
-            SectionCard(title = "Данные и карты") {
+            SectionCard(title = "Данные") {
                 LicenseItem(
                     title = "Данные расписания занятий",
                     description = "Публичный API расписания ДонГУ (edu.dongau.ru)."

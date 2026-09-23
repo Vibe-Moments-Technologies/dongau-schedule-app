@@ -23,7 +23,6 @@ import com.jetbrains.kmpapp.data.TaskRepository
 import com.jetbrains.kmpapp.data.sync.UnifiedSyncManager
 import com.jetbrains.kmpapp.screens.tasks.TasksViewModel
 import com.jetbrains.kmpapp.screens.compare.CompareScheduleViewModel
-import com.jetbrains.kmpapp.screens.notes.NotesViewModel
 import com.jetbrains.kmpapp.screens.services.ServicesViewModel
 
 import com.jetbrains.kmpapp.data.power.PlatformPowerManager
@@ -64,7 +63,6 @@ val viewModelModule = module {
     factoryOf(::OtherViewModel)
     factoryOf(::TasksViewModel)
     factoryOf(::CompareScheduleViewModel)
-    factoryOf(::NotesViewModel)
     factoryOf(::ServicesViewModel)
 }
 

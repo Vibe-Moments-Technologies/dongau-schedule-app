@@ -38,8 +38,6 @@ import com.jetbrains.kmpapp.screens.components.PlatformBackHandler
 import com.jetbrains.kmpapp.screens.components.isService
 import com.jetbrains.kmpapp.screens.compare.CompareScheduleScreen
 import com.jetbrains.kmpapp.screens.compare.CompareScheduleViewModel
-import com.jetbrains.kmpapp.screens.notes.NotesScreen
-import com.jetbrains.kmpapp.screens.notes.NotesViewModel
 import com.jetbrains.kmpapp.screens.tasks.TasksScreen
 import com.jetbrains.kmpapp.screens.tasks.TasksViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +65,6 @@ class ServicesViewModel : ViewModel() {
 
 private val SERVICE_DESCRIPTIONS = mapOf(
     AppTab.TASKS to "Дедлайны и задания по предметам",
-    AppTab.NOTES to "Заметки с цветными полями, хранятся на устройстве",
     AppTab.COMPARE to "Сравнение расписаний нескольких групп"
 )
 
@@ -77,7 +74,6 @@ fun ServicesScreen(
     dockTabs: List<AppTab>,
     tasksViewModel: TasksViewModel = org.koin.compose.viewmodel.koinViewModel(),
     compareViewModel: CompareScheduleViewModel = org.koin.compose.viewmodel.koinViewModel(),
-    notesViewModel: NotesViewModel = org.koin.compose.viewmodel.koinViewModel(),
     modifier: Modifier = Modifier
 ) {
     val activeService by viewModel.activeService.collectAsState()
@@ -130,10 +126,6 @@ fun ServicesScreen(
                 AppTab.TASKS -> {
                     PlatformBackHandler(onBack = back)
                     TasksScreen(viewModel = tasksViewModel)
-                }
-                AppTab.NOTES -> {
-                    PlatformBackHandler(onBack = back)
-                    NotesScreen(viewModel = notesViewModel)
                 }
                 AppTab.COMPARE -> {
                     PlatformBackHandler(onBack = back)

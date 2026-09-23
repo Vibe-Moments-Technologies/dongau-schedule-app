@@ -712,7 +712,6 @@ class ScheduleStorage(
         // пользователи не затрагиваются — их сохранённый док доверяется.
         val DEFAULT_DOCK_TABS = listOf(
             AppTab.SCHEDULE,
-            AppTab.TASKS,
             AppTab.OTHER
         )
     }

@@ -32,8 +32,6 @@ import com.jetbrains.kmpapp.screens.components.AppTab
 import com.jetbrains.kmpapp.screens.components.FloatingDock
 import com.jetbrains.kmpapp.screens.compare.CompareScheduleScreen
 import com.jetbrains.kmpapp.screens.compare.CompareScheduleViewModel
-import com.jetbrains.kmpapp.screens.notes.NotesScreen
-import com.jetbrains.kmpapp.screens.notes.NotesViewModel
 import com.jetbrains.kmpapp.screens.other.OtherScreen
 import com.jetbrains.kmpapp.screens.other.OtherViewModel
 import com.jetbrains.kmpapp.screens.schedule.ScheduleScreen
@@ -98,7 +96,6 @@ fun App() {
     val otherViewModel: OtherViewModel = koinViewModel()
     val tasksViewModel: TasksViewModel = koinViewModel()
     val compareViewModel: CompareScheduleViewModel = koinViewModel()
-    val notesViewModel: NotesViewModel = koinViewModel()
     val servicesViewModel: ServicesViewModel = koinViewModel()
 
     val systemDark = isSystemInDarkTheme()
@@ -139,9 +136,6 @@ fun App() {
                         }
                         AppTab.TASKS -> {
                             TasksScreen(viewModel = tasksViewModel)
-                        }
-                        AppTab.NOTES -> {
-                            NotesScreen(viewModel = notesViewModel)
                         }
                         AppTab.COMPARE -> {
                             CompareScheduleScreen(viewModel = compareViewModel)
@@ -185,7 +179,6 @@ fun App() {
                                     scheduleViewModel.selectLessonForDetail(null)
                                 }
                                 AppTab.TASKS -> {}
-                                AppTab.NOTES -> {}
                                 AppTab.COMPARE -> {}
                                 AppTab.SERVICES -> {
                                     servicesViewModel.closeService()

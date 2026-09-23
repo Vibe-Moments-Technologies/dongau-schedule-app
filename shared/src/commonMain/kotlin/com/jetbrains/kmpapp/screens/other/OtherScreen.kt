@@ -58,7 +58,6 @@ fun OtherScreen(
     viewModel: OtherViewModel,
     tasksViewModel: com.jetbrains.kmpapp.screens.tasks.TasksViewModel = org.koin.compose.viewmodel.koinViewModel(),
     compareViewModel: com.jetbrains.kmpapp.screens.compare.CompareScheduleViewModel = org.koin.compose.viewmodel.koinViewModel(),
-    notesViewModel: com.jetbrains.kmpapp.screens.notes.NotesViewModel = org.koin.compose.viewmodel.koinViewModel(),
     onNavigateToTab: (AppTab) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -99,8 +98,7 @@ fun OtherScreen(
                         onOpenTaskSettings = { viewModel.navigateToSubScreen(OtherSubScreen.TASK_SETTINGS) },
                         onOpenScheduleDisplay = { viewModel.navigateToSubScreen(OtherSubScreen.SCHEDULE_DISPLAY) },
                         onOpenScheduleProgress = { viewModel.navigateToSubScreen(OtherSubScreen.SCHEDULE_PROGRESS) },
-                        onOpenScheduleCalendar = { viewModel.navigateToSubScreen(OtherSubScreen.SCHEDULE_CALENDAR) },
-                        onOpenServiceSettings = { viewModel.navigateToSubScreen(OtherSubScreen.SERVICE_NOTES_SETTINGS) }
+                        onOpenScheduleCalendar = { viewModel.navigateToSubScreen(OtherSubScreen.SCHEDULE_CALENDAR) }
                     )
                 }
                 OtherSubScreen.DATA_AND_CACHE -> {
@@ -120,9 +118,6 @@ fun OtherScreen(
                 }
                 OtherSubScreen.SCHEDULE_CALENDAR -> {
                     ScheduleCalendarSettingsScreen(viewModel = viewModel, onBack = back)
-                }
-                OtherSubScreen.SERVICE_NOTES_SETTINGS -> {
-                    ServiceNotesSettingsScreen(viewModel = viewModel, onBack = back)
                 }
                 OtherSubScreen.RESOURCES -> {
                     ResourcesScreen(onBack = back)
@@ -157,10 +152,6 @@ fun OtherScreen(
                 OtherSubScreen.SERVICE_TASKS -> {
                     com.jetbrains.kmpapp.screens.components.PlatformBackHandler(onBack = back)
                     com.jetbrains.kmpapp.screens.tasks.TasksScreen(viewModel = tasksViewModel)
-                }
-                OtherSubScreen.SERVICE_NOTES -> {
-                    com.jetbrains.kmpapp.screens.components.PlatformBackHandler(onBack = back)
-                    com.jetbrains.kmpapp.screens.notes.NotesScreen(viewModel = notesViewModel)
                 }
                 OtherSubScreen.SERVICE_COMPARE -> {
                     com.jetbrains.kmpapp.screens.components.PlatformBackHandler(onBack = back)

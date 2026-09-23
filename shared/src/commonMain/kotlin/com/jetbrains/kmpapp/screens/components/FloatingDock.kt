@@ -58,7 +58,6 @@ enum class AppTab(
 ) {
     SCHEDULE("Расписание", Icons.Filled.DateRange, Icons.Outlined.DateRange, isFixed = true),
     TASKS("Задачи", Icons.Filled.TaskAlt, Icons.Outlined.TaskAlt, isFixed = false),
-    NOTES("Конспекты", Icons.Filled.EditNote, Icons.Outlined.EditNote, isFixed = false),
     COMPARE("Сравнение", Icons.Filled.CompareArrows, Icons.Outlined.CompareArrows, isFixed = false),
     // Раздел-концентратор сервисов: сам не экран приложения, а «папка» —
     // по умолчанию скрыт, добавляется в док как обычная вкладка.

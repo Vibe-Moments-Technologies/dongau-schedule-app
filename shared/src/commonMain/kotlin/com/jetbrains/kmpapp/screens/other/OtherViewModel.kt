@@ -41,8 +41,6 @@ enum class OtherSubScreen(val depth: Int) {
     SCHEDULE_DISPLAY(2),
     SCHEDULE_PROGRESS(2),
     SCHEDULE_CALENDAR(2),
-    // Параметры сервисов
-    SERVICE_NOTES_SETTINGS(2),
     RESOURCES(1),
     ABOUT(1),
     TEAM(2),
@@ -51,7 +49,6 @@ enum class OtherSubScreen(val depth: Int) {
     EXPERIMENTAL_SETTINGS(3),
     // Сервисы, открытые через блок «Сервисы» на главной «Другого».
     SERVICE_TASKS(1),
-    SERVICE_NOTES(1),
     SERVICE_COMPARE(1)
 }
 
@@ -65,7 +62,6 @@ private val SUB_SCREEN_PARENT = mapOf(
     OtherSubScreen.SCHEDULE_DISPLAY to OtherSubScreen.SETTINGS,
     OtherSubScreen.SCHEDULE_PROGRESS to OtherSubScreen.SETTINGS,
     OtherSubScreen.SCHEDULE_CALENDAR to OtherSubScreen.SETTINGS,
-    OtherSubScreen.SERVICE_NOTES_SETTINGS to OtherSubScreen.SETTINGS,
     OtherSubScreen.RESOURCES to OtherSubScreen.ROOT,
     OtherSubScreen.ABOUT to OtherSubScreen.ROOT,
     OtherSubScreen.TEAM to OtherSubScreen.ABOUT,
@@ -73,7 +69,6 @@ private val SUB_SCREEN_PARENT = mapOf(
     OtherSubScreen.DEBUG_SETTINGS to OtherSubScreen.ABOUT,
     OtherSubScreen.EXPERIMENTAL_SETTINGS to OtherSubScreen.DEBUG_SETTINGS,
     OtherSubScreen.SERVICE_TASKS to OtherSubScreen.ROOT,
-    OtherSubScreen.SERVICE_NOTES to OtherSubScreen.ROOT,
     OtherSubScreen.SERVICE_COMPARE to OtherSubScreen.ROOT
 )
 
@@ -83,7 +78,6 @@ fun OtherSubScreen.parent(): OtherSubScreen? =
 /** Сервисная подстраница для вкладки дока (null — не сервис). */
 fun AppTab.toServiceSubScreen(): OtherSubScreen? = when (this) {
     AppTab.TASKS -> OtherSubScreen.SERVICE_TASKS
-    AppTab.NOTES -> OtherSubScreen.SERVICE_NOTES
     AppTab.COMPARE -> OtherSubScreen.SERVICE_COMPARE
     else -> null
 }
@@ -92,7 +86,6 @@ fun AppTab.toServiceSubScreen(): OtherSubScreen? = when (this) {
 val OtherSubScreen.isServiceScreen: Boolean
     get() = this in setOf(
         OtherSubScreen.SERVICE_TASKS,
-        OtherSubScreen.SERVICE_NOTES,
         OtherSubScreen.SERVICE_COMPARE
     )
 

@@ -258,18 +258,6 @@ fun DataAndCacheScreen(
                     )
 
                     StorageDetailRow(
-                        icon = Icons.Default.Map,
-                        title = "Векторные карты корпусов",
-                        subtitle = "Все здания и этажи для работы офлайн",
-                        size = "~2.2 МБ"
-                    )
-
-                    androidx.compose.material3.HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 12.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
-                    )
-
-                    StorageDetailRow(
                         icon = Icons.Default.EditNote,
                         title = "Заметки к парам",
                         subtitle = "${notesCount} заметок",
@@ -370,7 +358,7 @@ fun DataAndCacheScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "Приложение спроектировано по концепции Offline-First: все расписания, карты корпусов и задачи сохраняются локально и работают мгновенно даже без подключения к сети.\n\n" +
+                        text = "Приложение спроектировано по концепции Offline-First: все расписания и задачи сохраняются локально и работают мгновенно даже без подключения к сети.\n\n" +
                                "В отличие от веб-браузеров, кэш не накапливается сотнями мегабайт, а точечно и автоматически обновляется в фоне при наличии интернета. " +
                                "Благодаря этому приложение всегда занимает минимум памяти на устройстве и не требует ручной очистки.",
                         style = MaterialTheme.typography.bodySmall,
