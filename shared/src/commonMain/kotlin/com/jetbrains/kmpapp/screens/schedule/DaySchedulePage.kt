@@ -60,6 +60,7 @@ internal fun DaySchedulePage(
     showEmptyLessonProgress: Boolean,
     showBreakProgress: Boolean,
     showAbbreviatedNames: Boolean,
+    coloredLessonCards: Boolean,
     scheduleTargetType: ScheduleTargetType,
     noteTargetId: Int,
     autoScrollToCurrentLesson: Boolean,
@@ -217,6 +218,7 @@ internal fun DaySchedulePage(
                     showLessonProgress = showLessonProgress,
                     showEmptyLessonProgress = showEmptyLessonProgress,
                     showAbbreviatedNames = showAbbreviatedNames,
+                    coloredLessonCards = coloredLessonCards,
                     scheduleTargetType = scheduleTargetType,
                     noteTargetId = noteTargetId
                 )

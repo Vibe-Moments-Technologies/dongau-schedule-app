@@ -106,6 +106,7 @@ class OtherViewModel(
     val hideAdditionalLessons: StateFlow<Boolean> = repository.hideAdditionalLessons
     val autoScrollToCurrentLesson: StateFlow<Boolean> = repository.autoScrollToCurrentLesson
     val showAbbreviatedNames: StateFlow<Boolean> = repository.showAbbreviatedNames
+    val coloredLessonCards: StateFlow<Boolean> = repository.coloredLessonCards
     val themeMode: StateFlow<ThemeMode> = repository.themeMode
     val themeOverlay: StateFlow<ThemeOverlay> = repository.themeOverlay
     val isSakuraTheme: StateFlow<Boolean> = repository.isSakuraTheme
@@ -141,6 +142,10 @@ class OtherViewModel(
 
     fun setAutoScrollToCurrentLesson(enabled: Boolean) {
         repository.setAutoScrollToCurrentLesson(enabled)
+    }
+
+    fun setColoredLessonCards(enabled: Boolean) {
+        repository.setColoredLessonCards(enabled)
     }
 
     fun setThemeOverlay(overlay: ThemeOverlay) {

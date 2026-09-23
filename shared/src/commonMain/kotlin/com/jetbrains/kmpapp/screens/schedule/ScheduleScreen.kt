@@ -116,6 +116,7 @@ private fun ScheduleMainContent(
     val calendarSwipeCollapse by viewModel.calendarSwipeCollapse.collectAsState()
     val autoScrollToCurrentLesson by viewModel.autoScrollToCurrentLesson.collectAsState()
     val showAbbreviatedNames by viewModel.showAbbreviatedNames.collectAsState()
+    val coloredLessonCards by viewModel.coloredLessonCards.collectAsState()
     // Значение НЕ читаем здесь: тик раз в 30 секунд не должен пересобирать
     // всё дерево расписания. State уходит вниз и читается только в карточках
     // «сегодня» (см. LessonCard).
@@ -281,6 +282,7 @@ private fun ScheduleMainContent(
                                 showEmptyLessonProgress = showEmptyLessonProgress,
                                 showBreakProgress = showBreakProgress,
                                 showAbbreviatedNames = showAbbreviatedNames,
+                                coloredLessonCards = coloredLessonCards,
                                 scheduleTargetType = selectedTarget?.type ?: com.jetbrains.kmpapp.data.model.ScheduleTargetType.GROUP,
                                 noteTargetId = selectedTarget?.id ?: -1,
                                 autoScrollToCurrentLesson = autoScrollToCurrentLesson,

@@ -61,6 +61,7 @@ fun ScheduleSlotCard(
     showEmptyLessonProgress: Boolean = true,
     showBreakProgress: Boolean = true,
     showAbbreviatedNames: Boolean = false,
+    coloredLessonCards: Boolean = true,
     scheduleTargetType: ScheduleTargetType = ScheduleTargetType.GROUP,
     noteTargetId: Int = -1,
     modifier: Modifier = Modifier
@@ -75,6 +76,7 @@ fun ScheduleSlotCard(
                     currentMinutesState = currentMinutesState,
                     showLessonProgress = showLessonProgress,
                     showAbbreviatedNames = showAbbreviatedNames,
+                    coloredLessonCards = coloredLessonCards,
                     scheduleTargetType = scheduleTargetType,
                     noteTargetId = noteTargetId,
                     modifier = modifier
@@ -90,6 +92,7 @@ fun ScheduleSlotCard(
                     currentMinutesState = currentMinutesState,
                     showLessonProgress = showLessonProgress,
                     showAbbreviatedNames = showAbbreviatedNames,
+                    coloredLessonCards = coloredLessonCards,
                     scheduleTargetType = scheduleTargetType,
                     noteTargetId = noteTargetId,
                     modifier = modifier
@@ -118,6 +121,7 @@ fun LessonCard(
     currentMinutesState: State<Int>? = null,
     showLessonProgress: Boolean = true,
     showAbbreviatedNames: Boolean = false,
+    coloredLessonCards: Boolean = true,
     scheduleTargetType: ScheduleTargetType = ScheduleTargetType.GROUP,
     noteTargetId: Int = -1,
     modifier: Modifier = Modifier,
@@ -125,9 +129,22 @@ fun LessonCard(
     horizontalMargin: androidx.compose.ui.unit.Dp = 16.dp
 ) {
     val typeBg = getLessonCardColor(lesson.lessonType)
-    val cardOnBg = Color.White
-    val cardOnBgDim = Color.White.copy(alpha = 0.7f)
-    val cardOnBgSubtle = Color.White.copy(alpha = 0.45f)
+    val (_, typeTextColor) = getTypeBadgeColors(lesson.lessonType)
+
+    // Два стиля карточки: «заливка» (site colors, по умолчанию) — вся карточка
+    // акцентным цветом с белым текстом; «нейтральный» (как в Красава) — фон темы,
+    // цветной только бейдж типа занятия.
+    val containerColor = if (coloredLessonCards) typeBg else MaterialTheme.colorScheme.surfaceContainer
+    val onColor = if (coloredLessonCards) Color.White else MaterialTheme.colorScheme.onSurface
+    val dimColor = if (coloredLessonCards) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant
+    val subtleColor = if (coloredLessonCards) Color.White.copy(alpha = 0.45f) else MaterialTheme.colorScheme.onSurfaceVariant
+    val bellBadgeBg = if (coloredLessonCards) Color.White.copy(alpha = 0.2f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+    val bellBadgeFg = if (coloredLessonCards) Color.White else MaterialTheme.colorScheme.primary
+    val typeBadgeBg = if (coloredLessonCards) Color.White.copy(alpha = 0.2f) else typeBg
+    val typeBadgeFg = if (coloredLessonCards) Color.White else typeTextColor
+    val noteBg = if (coloredLessonCards) Color.White.copy(alpha = 0.2f) else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f)
+    val progressTrack = if (coloredLessonCards) Color.White.copy(alpha = 0.25f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    val progressFill = if (coloredLessonCards) Color.White else MaterialTheme.colorScheme.primary
 
     // Заметка к паре (R2): реактивное чтение — превью появляется сразу после
     // сохранения (StateFlow), а ключ точный по targetId+дата+пара: заметки
@@ -155,7 +172,7 @@ fun LessonCard(
             .fillMaxWidth()
             .padding(horizontal = horizontalMargin, vertical = 6.dp),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = typeBg, contentColor = cardOnBg),
+        colors = CardDefaults.cardColors(containerColor = containerColor, contentColor = onColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
@@ -179,14 +196,14 @@ fun LessonCard(
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color.White.copy(alpha = 0.2f))
+                                .background(bellBadgeBg)
                                 .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
                             Text(
                                 text = "${lesson.bellNumber} пара",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = cardOnBg
+                                color = bellBadgeFg
                             )
                         }
 
@@ -196,7 +213,7 @@ fun LessonCard(
                             text = "${lesson.startTime} — ${lesson.endTime}",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
-                            color = cardOnBgDim
+                            color = dimColor
                         )
                     }
 
@@ -207,14 +224,14 @@ fun LessonCard(
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color.White.copy(alpha = 0.2f))
+                                .background(typeBadgeBg)
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
                             Text(
                                 text = lesson.lessonType.displayName,
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = cardOnBg
+                                color = typeBadgeFg
                             )
                         }
                     }
@@ -227,7 +244,7 @@ fun LessonCard(
                     text = if (showAbbreviatedNames) abbreviateSubjectName(lesson.subject) else lesson.subject,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = cardOnBg
+                    color = onColor
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -244,14 +261,14 @@ fun LessonCard(
                         Icon(
                             imageVector = Icons.Default.Group,
                             contentDescription = "Группы",
-                            tint = cardOnBgDim,
+                            tint = dimColor,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = groupsText,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = cardOnBgDim,
+                            color = dimColor,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -264,14 +281,14 @@ fun LessonCard(
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Преподаватель",
-                            tint = cardOnBgDim,
+                            tint = dimColor,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = lesson.teachers.joinToString(", "),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = cardOnBgDim,
+                            color = dimColor,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -287,14 +304,14 @@ fun LessonCard(
                             Icon(
                                 imageVector = Icons.Default.Group,
                                 contentDescription = "Группы",
-                                tint = cardOnBgDim,
+                                tint = dimColor,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = groupsText,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = cardOnBgDim,
+                                color = dimColor,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.weight(1f)
@@ -303,7 +320,7 @@ fun LessonCard(
                             Icon(
                                 imageVector = Icons.Default.LocationOn,
                                 contentDescription = "Аудитория",
-                                tint = cardOnBg,
+                                tint = onColor,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
@@ -311,7 +328,7 @@ fun LessonCard(
                                 text = lesson.classrooms.joinToString(", "),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.SemiBold,
-                                color = cardOnBg,
+                                color = onColor,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.weight(1f, fill = false)
@@ -323,14 +340,14 @@ fun LessonCard(
                             Icon(
                                 imageVector = Icons.Default.Group,
                                 contentDescription = "Группы",
-                                tint = cardOnBgSubtle,
+                                tint = subtleColor,
                                 modifier = Modifier.size(15.dp)
                             )
                             Spacer(modifier = Modifier.width(5.dp))
                             Text(
                                 text = groupsText,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = cardOnBgSubtle,
+                                color = subtleColor,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.weight(1f)
@@ -347,20 +364,20 @@ fun LessonCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(10.dp))
-                            .background(Color.White.copy(alpha = 0.2f))
+                            .background(noteBg)
                             .padding(horizontal = 10.dp, vertical = 8.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.EditNote,
                             contentDescription = null,
-                            tint = cardOnBg,
+                            tint = onColor,
                             modifier = Modifier.size(14.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = notePreview,
                             style = MaterialTheme.typography.bodySmall,
-                            color = cardOnBgDim,
+                            color = dimColor,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f)
@@ -378,7 +395,7 @@ fun LessonCard(
                             text = "$total ${if (total in 2..4) "пары" else "пар"} в это время",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            color = cardOnBgDim
+                            color = dimColor
                         )
                         repeat(total) { index ->
                             Box(
@@ -386,8 +403,8 @@ fun LessonCard(
                                     .size(if (index == current) 6.dp else 4.dp)
                                     .clip(CircleShape)
                                     .background(
-                                        if (index == current) cardOnBg
-                                        else cardOnBgSubtle
+                                        if (index == current) onColor
+                                        else subtleColor
                                     )
                             )
                         }
@@ -404,14 +421,14 @@ fun LessonCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(2.5.dp)
-                        .background(Color.White.copy(alpha = 0.25f))
+                        .background(progressTrack)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(animatedProgress)
                             .height(2.5.dp)
                             .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = if (animatedProgress >= 0.98f) 20.dp else 0.dp))
-                            .background(Color.White)
+                            .background(progressFill)
                     )
                 }
             }
@@ -430,6 +447,7 @@ fun MultiLessonCard(
     currentMinutesState: State<Int>? = null,
     showLessonProgress: Boolean = true,
     showAbbreviatedNames: Boolean = false,
+    coloredLessonCards: Boolean = true,
     scheduleTargetType: ScheduleTargetType = ScheduleTargetType.GROUP,
     noteTargetId: Int = -1,
     modifier: Modifier = Modifier
@@ -451,6 +469,7 @@ fun MultiLessonCard(
             currentMinutesState = currentMinutesState,
             showLessonProgress = showLessonProgress,
             showAbbreviatedNames = showAbbreviatedNames,
+            coloredLessonCards = coloredLessonCards,
             scheduleTargetType = scheduleTargetType,
             noteTargetId = noteTargetId,
             pageIndicator = lessons.size to pagerState.currentPage,

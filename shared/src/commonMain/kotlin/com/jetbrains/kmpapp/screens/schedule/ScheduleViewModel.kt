@@ -40,6 +40,7 @@ class ScheduleViewModel(
     val calendarSwipeCollapse: StateFlow<Boolean> = repository.calendarSwipeCollapse
     val autoScrollToCurrentLesson: StateFlow<Boolean> = repository.autoScrollToCurrentLesson
     val showAbbreviatedNames: StateFlow<Boolean> = repository.showAbbreviatedNames
+    val coloredLessonCards: StateFlow<Boolean> = repository.coloredLessonCards
 
     private var lastAutoScrolledDate: LocalDate? = null
     private var lastAutoScrolledTargetId: Int? = null

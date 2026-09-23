@@ -65,6 +65,11 @@ class ScheduleStorage(
     private val _showAbbreviatedNames = MutableStateFlow<Boolean>(false)
     val showAbbreviatedNames: StateFlow<Boolean> = _showAbbreviatedNames.asStateFlow()
 
+    // Заливка карточек пар акцентным цветом по типу занятия (site colors).
+    // По умолчанию включено; выключение возвращает нейтральный стиль.
+    private val _coloredLessonCards = MutableStateFlow<Boolean>(true)
+    val coloredLessonCards: StateFlow<Boolean> = _coloredLessonCards.asStateFlow()
+
     private val _themeMode = MutableStateFlow<ThemeMode>(ThemeMode.SYSTEM)
     val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
 
@@ -131,6 +136,7 @@ class ScheduleStorage(
         _hideAdditionalLessons.value = loadBooleanFlag(KEY_HIDE_ADDITIONAL_LESSONS, false)
         _autoScrollToCurrentLesson.value = loadBooleanFlag(KEY_AUTO_SCROLL_CURRENT_LESSON, true)
         _showAbbreviatedNames.value = loadBooleanFlag(KEY_SHOW_ABBREVIATED_NAMES, false)
+        _coloredLessonCards.value = loadBooleanFlag(KEY_COLORED_LESSON_CARDS, true)
         _themeOverlay.value = loadThemeOverlay()
         _cheatsAgreed.value = nullableFlag(KEY_CHEATS_AGREED)
         _cheatsBlocked.value = loadBooleanFlag(KEY_CHEATS_BLOCKED, false)
@@ -365,6 +371,17 @@ class ScheduleStorage(
                 platformStorage.saveString(KEY_SHOW_ABBREVIATED_NAMES, enabled.toString())
             } catch (e: Exception) {
                 println("Failed to persist showAbbreviatedNames: ${e.message}")
+            }
+        }
+    }
+
+    fun setColoredLessonCards(enabled: Boolean) {
+        _coloredLessonCards.value = enabled
+        scope.launch {
+            try {
+                platformStorage.saveString(KEY_COLORED_LESSON_CARDS, enabled.toString())
+            } catch (e: Exception) {
+                println("Failed to persist coloredLessonCards: ${e.message}")
             }
         }
     }
@@ -689,6 +706,7 @@ class ScheduleStorage(
         private const val KEY_HIDE_ADDITIONAL_LESSONS = "dongau_hide_additional_lessons"
         private const val KEY_AUTO_SCROLL_CURRENT_LESSON = "dongau_auto_scroll_current_lesson"
         private const val KEY_SHOW_ABBREVIATED_NAMES = "dongau_show_abbreviated_names"
+        private const val KEY_COLORED_LESSON_CARDS = "dongau_colored_lesson_cards"
         private const val KEY_APP_THEME = "dongau_app_theme"
         private const val KEY_DOCK_TABS = "dongau_dock_tabs_order"
         private const val KEY_SAKURA_THEME = "dongau_sakura_theme_secret"
@@ -706,7 +724,6 @@ class ScheduleStorage(
         // пользователи не затрагиваются — их сохранённый док доверяется.
         val DEFAULT_DOCK_TABS = listOf(
             AppTab.SCHEDULE,
-            AppTab.SERVICES,
             AppTab.OTHER
         )
     }

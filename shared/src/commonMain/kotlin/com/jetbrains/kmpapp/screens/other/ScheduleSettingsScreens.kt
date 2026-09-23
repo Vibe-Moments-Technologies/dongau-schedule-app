@@ -51,7 +51,7 @@ fun ScheduleDisplaySettingsScreen(
 ) {
     PlatformBackHandler(onBack = onBack)
     val showEmptyLessons by viewModel.showEmptyLessons.collectAsState()
-    val hideAdditionalLessons by viewModel.hideAdditionalLessons.collectAsState()
+    val coloredLessonCards by viewModel.coloredLessonCards.collectAsState()
     val showAbbreviatedNames by viewModel.showAbbreviatedNames.collectAsState()
     val autoScrollToCurrentLesson by viewModel.autoScrollToCurrentLesson.collectAsState()
 
@@ -67,10 +67,10 @@ fun ScheduleDisplaySettingsScreen(
             onCheckedChange = { viewModel.setShowEmptyLessons(it) }
         )
         SettingsToggleRow(
-            title = "Скрывать доп. занятия",
-            subtitle = "Не показывать пары типа «ДОП» в расписании, календаре и напоминаниях",
-            checked = hideAdditionalLessons,
-            onCheckedChange = { viewModel.setHideAdditionalLessons(it) }
+            title = "Цветные карточки пар",
+            subtitle = "Заливать карточку цветом типа занятия; выключение возвращает нейтральный стиль",
+            checked = coloredLessonCards,
+            onCheckedChange = { viewModel.setColoredLessonCards(it) }
         )
         SettingsToggleRow(
             title = "Сокращённые названия",
