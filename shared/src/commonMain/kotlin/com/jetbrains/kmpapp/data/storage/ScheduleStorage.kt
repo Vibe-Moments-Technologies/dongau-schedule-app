@@ -469,13 +469,7 @@ class ScheduleStorage(
 
     private fun sanitizeDockTabs(tabs: List<AppTab>): List<AppTab> {
         return try {
-            var middle = tabs.filter { !it.isFixed }.distinct().take(3)
-            // Правило владельца: док не может опустеть до двух базовых
-            // разделов — «Сервисы» ставятся между ними и «блокируются»,
-            // пока в доке не появится другой скрываемый раздел.
-            if (middle.none { it != AppTab.SERVICES }) {
-                middle = listOf(AppTab.SERVICES)
-            }
+            val middle = tabs.filter { !it.isFixed }.distinct().take(3)
             listOf(AppTab.SCHEDULE) + middle + listOf(AppTab.OTHER)
         } catch (_: Throwable) {
             DEFAULT_DOCK_TABS
@@ -712,6 +706,7 @@ class ScheduleStorage(
         // пользователи не затрагиваются — их сохранённый док доверяется.
         val DEFAULT_DOCK_TABS = listOf(
             AppTab.SCHEDULE,
+            AppTab.SERVICES,
             AppTab.OTHER
         )
     }
