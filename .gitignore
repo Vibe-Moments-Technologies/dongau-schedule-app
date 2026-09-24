@@ -67,3 +67,7 @@ images/
 *.keystore
 *.jks
 *.p12
+
+# Internal working docs - never committed
+PLAN.md
+dist_version/
