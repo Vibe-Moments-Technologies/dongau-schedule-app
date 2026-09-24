@@ -1,13 +1,14 @@
 {
   "version": "26.1.0",
-  "build": 1,
+  "build": 1790258273,
   "critical": false,
   "min_supported_build": 1,
-  "changelog": "Первая версия «Расписание ДонГУ» на новой базе: расписание занятий ДонГУ (группы), задачи, конспекты, сравнение расписаний, напоминания о парах, темы оформления, цветные карточки пар.",
+  "changelog": "Первая версия «Расписание ДонГУ» на новой базе: расписание занятий ДонГУ (группы), задачи, сравнение расписаний, напоминания о парах, темы оформления, цветные карточки пар.",
   "download_url": "https://github.com/Vibe-Moments-Technologies/dongau-schedule-app/releases/latest",
   "apk_url": "https://github.com/Vibe-Moments-Technologies/dongau-schedule-app/releases/latest/download/DongauSchedule.apk",
   "ipa_url": "https://github.com/Vibe-Moments-Technologies/dongau-schedule-app/releases/latest/download/DongauSchedule.ipa",
   "channel": "stable",
   "prerelease": false,
-  "updated_at": "2026-09-23T17:12:34.261677+00:00"
+  "updated_at": "2026-09-24T14:16:52.593223+00:00",
+  "commit_sha": "2bde187"
 }
