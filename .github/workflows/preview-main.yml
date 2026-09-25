@@ -14,7 +14,6 @@ on:
       - 'shared/**'
       - 'androidApp/**'
       - 'iosApp/**'
-      - 'maps/**'
       - 'gradle/**'
       - 'build.gradle.kts'
       - 'settings.gradle.kts'

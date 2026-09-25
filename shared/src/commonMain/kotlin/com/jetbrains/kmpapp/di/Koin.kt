@@ -20,7 +20,6 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 import com.jetbrains.kmpapp.data.TaskRepository
-import com.jetbrains.kmpapp.data.sync.UnifiedSyncManager
 import com.jetbrains.kmpapp.screens.tasks.TasksViewModel
 import com.jetbrains.kmpapp.screens.compare.CompareScheduleViewModel
 import com.jetbrains.kmpapp.screens.services.ServicesViewModel
@@ -48,7 +47,6 @@ val dataModule = module {
 
     singleOf(::PlatformPowerManager)
     singleOf(::PlatformStorage)
-    singleOf(::UnifiedSyncManager)
     singleOf(::DongauScheduleApi)
     singleOf(::ScheduleStorage)
     singleOf(::LessonNotesStorage)

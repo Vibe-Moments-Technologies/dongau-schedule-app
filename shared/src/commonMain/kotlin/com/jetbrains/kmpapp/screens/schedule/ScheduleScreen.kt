@@ -283,7 +283,6 @@ private fun ScheduleMainContent(
                                 showBreakProgress = showBreakProgress,
                                 showAbbreviatedNames = showAbbreviatedNames,
                                 coloredLessonCards = coloredLessonCards,
-                                scheduleTargetType = selectedTarget?.type ?: com.jetbrains.kmpapp.data.model.ScheduleTargetType.GROUP,
                                 noteTargetId = selectedTarget?.id ?: -1,
                                 autoScrollToCurrentLesson = autoScrollToCurrentLesson,
                                 canAutoScroll = { viewModel.canAutoScroll(it, selectedTarget?.id) },

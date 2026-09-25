@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jetbrains.kmpapp.data.model.Lesson
 import com.jetbrains.kmpapp.data.model.ScheduleSlot
-import com.jetbrains.kmpapp.data.model.ScheduleTargetType
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
@@ -61,7 +60,6 @@ internal fun DaySchedulePage(
     showBreakProgress: Boolean,
     showAbbreviatedNames: Boolean,
     coloredLessonCards: Boolean,
-    scheduleTargetType: ScheduleTargetType,
     noteTargetId: Int,
     autoScrollToCurrentLesson: Boolean,
     canAutoScroll: (LocalDate) -> Boolean,
@@ -219,7 +217,6 @@ internal fun DaySchedulePage(
                     showEmptyLessonProgress = showEmptyLessonProgress,
                     showAbbreviatedNames = showAbbreviatedNames,
                     coloredLessonCards = coloredLessonCards,
-                    scheduleTargetType = scheduleTargetType,
                     noteTargetId = noteTargetId
                 )
             }

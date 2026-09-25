@@ -43,11 +43,6 @@ class ScheduleRepository(
     val showEmptyLessons: StateFlow<Boolean> = storage.showEmptyLessons
     val themeMode: StateFlow<ThemeMode> = storage.themeMode
     val dockTabs: StateFlow<List<com.jetbrains.kmpapp.screens.components.AppTab>> = storage.dockTabs
-    val notePages: StateFlow<List<com.jetbrains.kmpapp.data.model.NotePage>> = storage.notePages
-
-    fun updateNotePages(pages: List<com.jetbrains.kmpapp.data.model.NotePage>) {
-        storage.saveNotePages(pages)
-    }
 
     fun setDockTabs(tabs: List<com.jetbrains.kmpapp.screens.components.AppTab>) {
         storage.setDockTabs(tabs)
@@ -120,12 +115,6 @@ class ScheduleRepository(
         storage.setCalendarSwipeCollapse(enabled)
     }
 
-    val hideAdditionalLessons: StateFlow<Boolean> = storage.hideAdditionalLessons
-
-    fun setHideAdditionalLessons(enabled: Boolean) {
-        storage.setHideAdditionalLessons(enabled)
-    }
-
     val autoScrollToCurrentLesson: StateFlow<Boolean> = storage.autoScrollToCurrentLesson
 
     fun setAutoScrollToCurrentLesson(enabled: Boolean) {
@@ -145,7 +134,6 @@ class ScheduleRepository(
     val notificationsEnabled: StateFlow<Boolean> = storage.notificationsEnabled
     val notifyMinutesBefore: StateFlow<Int> = storage.notifyMinutesBefore
     val notificationsTargetId: StateFlow<Int?> = storage.notificationsTargetId
-    val askBeforeNoteDelete: StateFlow<Boolean> = storage.askBeforeNoteDelete
 
     init {
         // Единая точка перепланирования напоминаний: кэш расписания, выбранная
@@ -221,7 +209,6 @@ class ScheduleRepository(
     fun setNotificationsEnabled(enabled: Boolean) = storage.setNotificationsEnabled(enabled)
     fun setNotifyMinutesBefore(minutes: Int) = storage.setNotifyMinutesBefore(minutes)
     fun setNotificationsTargetId(targetId: Int?) = storage.setNotificationsTargetId(targetId)
-    fun setAskBeforeNoteDelete(ask: Boolean) = storage.setAskBeforeNoteDelete(ask)
 
     fun setSakuraTheme(enabled: Boolean) {
         storage.setSakuraThemeExclusive(enabled)

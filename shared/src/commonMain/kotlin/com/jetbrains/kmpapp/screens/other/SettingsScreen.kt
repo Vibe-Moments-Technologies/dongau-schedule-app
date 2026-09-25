@@ -23,7 +23,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Check
@@ -78,7 +77,6 @@ fun SettingsScreen(
     PlatformBackHandler(onBack = onBack)
 
     val showEmptyLessons by viewModel.showEmptyLessons.collectAsState()
-    val hideAdditionalLessons by viewModel.hideAdditionalLessons.collectAsState()
     val showLessonProgress by viewModel.showLessonProgress.collectAsState()
     val showEmptyLessonProgress by viewModel.showEmptyLessonProgress.collectAsState()
     val showBreakProgress by viewModel.showBreakProgress.collectAsState()

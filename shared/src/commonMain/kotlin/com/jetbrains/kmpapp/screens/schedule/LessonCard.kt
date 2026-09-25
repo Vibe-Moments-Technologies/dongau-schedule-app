@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.sp
 import com.jetbrains.kmpapp.data.model.Lesson
 import com.jetbrains.kmpapp.data.model.LessonType
 import com.jetbrains.kmpapp.data.model.ScheduleSlot
-import com.jetbrains.kmpapp.data.model.ScheduleTargetType
 import com.jetbrains.kmpapp.data.storage.LessonNotesStorage
 import org.koin.compose.koinInject
 
@@ -62,7 +61,6 @@ fun ScheduleSlotCard(
     showBreakProgress: Boolean = true,
     showAbbreviatedNames: Boolean = false,
     coloredLessonCards: Boolean = true,
-    scheduleTargetType: ScheduleTargetType = ScheduleTargetType.GROUP,
     noteTargetId: Int = -1,
     modifier: Modifier = Modifier
 ) {
@@ -77,7 +75,6 @@ fun ScheduleSlotCard(
                     showLessonProgress = showLessonProgress,
                     showAbbreviatedNames = showAbbreviatedNames,
                     coloredLessonCards = coloredLessonCards,
-                    scheduleTargetType = scheduleTargetType,
                     noteTargetId = noteTargetId,
                     modifier = modifier
                 )
@@ -93,7 +90,6 @@ fun ScheduleSlotCard(
                     showLessonProgress = showLessonProgress,
                     showAbbreviatedNames = showAbbreviatedNames,
                     coloredLessonCards = coloredLessonCards,
-                    scheduleTargetType = scheduleTargetType,
                     noteTargetId = noteTargetId,
                     modifier = modifier
                 )
@@ -122,7 +118,6 @@ fun LessonCard(
     showLessonProgress: Boolean = true,
     showAbbreviatedNames: Boolean = false,
     coloredLessonCards: Boolean = true,
-    scheduleTargetType: ScheduleTargetType = ScheduleTargetType.GROUP,
     noteTargetId: Int = -1,
     modifier: Modifier = Modifier,
     pageIndicator: Pair<Int, Int>? = null,
@@ -249,31 +244,9 @@ fun LessonCard(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Details: show the useful entity for the selected schedule target.
                 val groupsText = lesson.groups.joinToString(", ")
-                val showGroupsAsTeacherReplacement = scheduleTargetType == ScheduleTargetType.TEACHER && lesson.groups.isNotEmpty()
 
-                if (showGroupsAsTeacherReplacement) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(vertical = 2.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Group,
-                            contentDescription = "Группы",
-                            tint = dimColor,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = groupsText,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = dimColor,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                } else if (lesson.teachers.isNotEmpty()) {
+                if (lesson.teachers.isNotEmpty()) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(vertical = 2.dp)
@@ -300,23 +273,7 @@ fun LessonCard(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (scheduleTargetType == ScheduleTargetType.AUDITORIUM && lesson.groups.isNotEmpty()) {
-                            Icon(
-                                imageVector = Icons.Default.Group,
-                                contentDescription = "Группы",
-                                tint = dimColor,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = groupsText,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = dimColor,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f)
-                            )
-                        } else if (lesson.classrooms.isNotEmpty()) {
+                        if (lesson.classrooms.isNotEmpty()) {
                             Icon(
                                 imageVector = Icons.Default.LocationOn,
                                 contentDescription = "Аудитория",
@@ -335,7 +292,7 @@ fun LessonCard(
                             )
                         }
 
-                        if (scheduleTargetType == ScheduleTargetType.GROUP && lesson.groups.size > 1) {
+                        if (lesson.groups.size > 1) {
                             Spacer(modifier = Modifier.width(16.dp))
                             Icon(
                                 imageVector = Icons.Default.Group,
@@ -448,7 +405,6 @@ fun MultiLessonCard(
     showLessonProgress: Boolean = true,
     showAbbreviatedNames: Boolean = false,
     coloredLessonCards: Boolean = true,
-    scheduleTargetType: ScheduleTargetType = ScheduleTargetType.GROUP,
     noteTargetId: Int = -1,
     modifier: Modifier = Modifier
 ) {
@@ -470,7 +426,6 @@ fun MultiLessonCard(
             showLessonProgress = showLessonProgress,
             showAbbreviatedNames = showAbbreviatedNames,
             coloredLessonCards = coloredLessonCards,
-            scheduleTargetType = scheduleTargetType,
             noteTargetId = noteTargetId,
             pageIndicator = lessons.size to pagerState.currentPage,
             horizontalMargin = 0.dp

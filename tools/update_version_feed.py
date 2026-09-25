@@ -4,7 +4,7 @@ tools/update_version_feed.py — генерация канальных фидо�
 
 Каналы и файлы:
   --channel stable   : version.json (автообновление обычных пользователей) + apps.json
-  --channel beta|rc  : beta.json (opt-in бета-канал в настройках приложения) + apps.json
+  --channel beta|rc  : apps.json только (приложение бета-фид не читает)
   --channel preview  : apps.json только (rolling dev-сборка main)
 
 apps.json — ЕДИНЫЙ GBox/AltStore-источник: список всех живых каналов
@@ -30,7 +30,7 @@ BUNDLE_ID = "ru.vibemoments.dongauschedule"
 DEVELOPER_NAME = "Vibe Moments Technologies"
 TINT_COLOR = "4F46E5"
 APP_DESCRIPTION = (
-    "Расписание пар ДонГУ, задачи, конспекты, сравнение расписаний "
+    "Расписание пар ДонГУ, задачи, сравнение расписаний "
     "и офлайн-кеш."
 )
 
@@ -163,35 +163,32 @@ def main():
     repo, changelog, critical, min_supported = parse_app_version(args.app_version_file)
     channel = args.channel
     is_stable = channel == "stable"
-    # beta и rc пишут один и тот же фид: бета-канал приложения читает beta.json
-    is_beta = channel in ("beta", "rc")
     urls = asset_urls(repo, channel, args.version)
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     written = []
 
-    # 1) Канальные фиды обновлений приложения
-    if is_stable or is_beta:
+    # 1) Фид обновлений приложения (только stable: бета-канал из приложения убран)
+    if is_stable:
         feed = {
             "version": args.version,
             "build": args.build_number,
-            "critical": critical and is_stable,
-            "min_supported_build": min_supported if is_stable else 1,
+            "critical": critical,
+            "min_supported_build": min_supported,
             "changelog": changelog,
             "download_url": urls["download_url"],
             "apk_url": urls["apk_url"],
             "ipa_url": urls["ipa_url"],
-            "channel": "stable" if is_stable else channel,
-            "prerelease": not is_stable,
+            "channel": "stable",
+            "prerelease": False,
             "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         if args.commit_sha:
             feed["commit_sha"] = args.commit_sha
-        feed_name = "version.json" if is_stable else "beta.json"
-        (out_dir / feed_name).write_text(
+        (out_dir / "version.json").write_text(
             json.dumps(feed, indent=2, ensure_ascii=False), encoding="utf-8")
-        written.append(feed_name)
+        written.append("version.json")
 
     # 2) Единый GBox/AltStore-источник: apps.json (все каналы).
     #    apps-beta.json — алиас того же содержимого для старых подписок.

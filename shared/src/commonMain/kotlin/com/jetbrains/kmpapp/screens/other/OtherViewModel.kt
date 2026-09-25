@@ -103,7 +103,6 @@ class OtherViewModel(
     val showEmptyLessonProgress: StateFlow<Boolean> = repository.showEmptyLessonProgress
     val showBreakProgress: StateFlow<Boolean> = repository.showBreakProgress
     val calendarSwipeCollapse: StateFlow<Boolean> = repository.calendarSwipeCollapse
-    val hideAdditionalLessons: StateFlow<Boolean> = repository.hideAdditionalLessons
     val autoScrollToCurrentLesson: StateFlow<Boolean> = repository.autoScrollToCurrentLesson
     val showAbbreviatedNames: StateFlow<Boolean> = repository.showAbbreviatedNames
     val coloredLessonCards: StateFlow<Boolean> = repository.coloredLessonCards
@@ -118,7 +117,6 @@ class OtherViewModel(
     val notificationsEnabled: StateFlow<Boolean> = repository.notificationsEnabled
     val notifyMinutesBefore: StateFlow<Int> = repository.notifyMinutesBefore
     val notificationsTargetId: StateFlow<Int?> = repository.notificationsTargetId
-    val askBeforeNoteDelete: StateFlow<Boolean> = repository.askBeforeNoteDelete
 
     fun setShowLessonProgress(enabled: Boolean) {
         repository.setShowLessonProgress(enabled)
@@ -134,10 +132,6 @@ class OtherViewModel(
 
     fun setCalendarSwipeCollapse(enabled: Boolean) {
         repository.setCalendarSwipeCollapse(enabled)
-    }
-
-    fun setHideAdditionalLessons(enabled: Boolean) {
-        repository.setHideAdditionalLessons(enabled)
     }
 
     fun setAutoScrollToCurrentLesson(enabled: Boolean) {
@@ -166,7 +160,6 @@ class OtherViewModel(
     fun setNotificationsEnabled(enabled: Boolean) = repository.setNotificationsEnabled(enabled)
     fun setNotifyMinutesBefore(minutes: Int) = repository.setNotifyMinutesBefore(minutes)
     fun setNotificationsTargetId(targetId: Int?) = repository.setNotificationsTargetId(targetId)
-    fun setAskBeforeNoteDelete(ask: Boolean) = repository.setAskBeforeNoteDelete(ask)
 
     fun setDockTabs(tabs: List<AppTab>) {
         repository.setDockTabs(tabs)

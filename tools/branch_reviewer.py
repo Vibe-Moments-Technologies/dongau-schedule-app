@@ -115,7 +115,7 @@ def analyze_feature_impact(file_stats, diff):
         testing_recommendations.append("Создайте тестовую задачу с дедлайном и убедитесь, что она корректно сохраняется и отображается в списке.")
 
     # Storage and Cache
-    storage_files = [p for p in paths if 'storage/' in p or 'UnifiedSyncManager' in p or 'DataAndCache' in p]
+    storage_files = [p for p in paths if 'storage/' in p or 'DataAndCache' in p]
     if storage_files:
         affected_modules.add('💾 **Хранилище данных и кэширование**')
         impacts.append(f"- 💾 **Локальное хранилище:** Изменена сериализация или запись в `PlatformStorage` (`SharedPreferences` / `NSUserDefaults`). Опасность потери кэша при обновлении!")
