@@ -19,10 +19,10 @@
       "name": "Расписание ДонГУ (Dev)",
       "bundleIdentifier": "ru.vibemoments.dongauschedule",
       "developerName": "Vibe Moments Technologies",
-      "localizedDescription": "Расписание пар ДонГУ, задачи, конспекты, сравнение расписаний и офлайн-кеш.\n\nКанал: preview\nСборка: 26.1.0-dev.8\nОбновлено: 2026-09-24 11:57 UTC",
+      "localizedDescription": "Расписание пар ДонГУ, задачи, сравнение расписаний и офлайн-кеш.\n\nКанал: preview\nСборка: 26.1.0-dev.9\nОбновлено: 2026-09-25 20:13 UTC",
       "iconURL": "https://raw.githubusercontent.com/Vibe-Moments-Technologies/dongau-schedule-app/main/shared/src/commonMain/composeResources/drawable/appicon_dongau.png",
-      "version": "26.1.0-dev.8",
-      "versionDate": "2026-09-24T11:57:42.595569+00:00",
+      "version": "26.1.0-dev.9",
+      "versionDate": "2026-09-25T20:13:21.396651+00:00",
       "downloadURL": "https://github.com/Vibe-Moments-Technologies/dongau-schedule-app/releases/download/preview/DongauSchedule-preview.ipa",
       "tintColor": "4F46E5",
       "channel": "preview"
